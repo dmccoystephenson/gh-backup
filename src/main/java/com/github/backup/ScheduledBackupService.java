@@ -1,5 +1,7 @@
 package com.github.backup;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -20,16 +22,19 @@ import java.util.List;
 @ConditionalOnProperty(name = "backup.mode", havingValue = "daemon")
 public class ScheduledBackupService {
 
-    private static final long BACKUP_INTERVAL_MS = 86400000; // 24 hours in milliseconds
+    private static final Logger log = LoggerFactory.getLogger(ScheduledBackupService.class);
     private static final int SEPARATOR_LENGTH = 80;
 
     private final BackupService backupService;
     private final List<String> scheduledUsers;
+    private final long backupIntervalMs;
     private final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     public ScheduledBackupService(BackupService backupService,
-                                   @Value("${backup.scheduled.users:}") String scheduledUsersConfig) {
+                                   @Value("${backup.scheduled.users:}") String scheduledUsersConfig,
+                                   @Value("${backup.scheduled.interval.ms:86400000}") long backupIntervalMs) {
         this.backupService = backupService;
+        this.backupIntervalMs = backupIntervalMs;
         // Parse comma-separated list of users/orgs
         this.scheduledUsers = scheduledUsersConfig.isBlank() 
             ? List.of() 
@@ -42,46 +47,46 @@ public class ScheduledBackupService {
     @PostConstruct
     public void init() {
         if (scheduledUsers.isEmpty()) {
-            System.out.println("⚠ Warning: No users/organizations configured for scheduled backups.");
-            System.out.println("Set the 'backup.scheduled.users' property with a comma-separated list.");
-            System.out.println("Example: backup.scheduled.users=octocat,github");
+            log.warn("No users/organizations configured for scheduled backups.");
+            log.warn("Set the 'backup.scheduled.users' property with a comma-separated list.");
+            log.warn("Example: backup.scheduled.users=octocat,github");
         } else {
-            System.out.println("GitHub Backup Daemon Mode");
-            System.out.println("========================");
-            System.out.println("Scheduled backups enabled for: " + String.join(", ", scheduledUsers));
-            System.out.println("Backup interval: Every 24 hours");
-            System.out.println("First backup will run immediately, then every 24 hours.");
-            System.out.println();
+            log.info("GitHub Backup Daemon Mode");
+            log.info("========================");
+            log.info("Scheduled backups enabled for: {}", String.join(", ", scheduledUsers));
+            log.info("Backup interval: {} hours", backupIntervalMs / 3600000.0);
+            log.info("First backup will run immediately, then every {} hours.", backupIntervalMs / 3600000.0);
         }
     }
 
     /**
      * Runs backup for all configured users/organizations.
-     * Executes on startup and then every 24 hours.
+     * Executes on startup and then at the configured interval after each completion.
+     * Uses fixedDelay to ensure the next backup starts only after the previous one completes.
      */
-    @Scheduled(fixedRate = BACKUP_INTERVAL_MS, initialDelay = 0)
+    @Scheduled(fixedDelayString = "${backup.scheduled.interval.ms:86400000}", initialDelay = 0)
     public void runScheduledBackup() {
         if (scheduledUsers.isEmpty()) {
             return;
         }
 
         String timestamp = LocalDateTime.now().format(dateTimeFormatter);
-        System.out.println("\n" + "=".repeat(SEPARATOR_LENGTH));
-        System.out.println("Starting scheduled backup at " + timestamp);
-        System.out.println("=".repeat(SEPARATOR_LENGTH));
+        log.info("\n{}", "=".repeat(SEPARATOR_LENGTH));
+        log.info("Starting scheduled backup at {}", timestamp);
+        log.info("{}", "=".repeat(SEPARATOR_LENGTH));
 
         for (String userOrOrg : scheduledUsers) {
             try {
                 backupService.backupUserRepositories(userOrOrg);
             } catch (IOException e) {
-                System.err.println("Error backing up " + userOrOrg + ": " + e.getMessage());
+                log.error("Error backing up {}: {}", userOrOrg, e.getMessage());
             }
         }
 
         timestamp = LocalDateTime.now().format(dateTimeFormatter);
-        System.out.println("\n" + "=".repeat(SEPARATOR_LENGTH));
-        System.out.println("Scheduled backup completed at " + timestamp);
-        System.out.println("Next backup will run in 24 hours.");
-        System.out.println("=".repeat(SEPARATOR_LENGTH) + "\n");
+        log.info("\n{}", "=".repeat(SEPARATOR_LENGTH));
+        log.info("Scheduled backup completed at {}", timestamp);
+        log.info("Next backup will run {} hours after this backup completes.", backupIntervalMs / 3600000.0);
+        log.info("{}\n", "=".repeat(SEPARATOR_LENGTH));
     }
 }

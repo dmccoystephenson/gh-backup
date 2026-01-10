@@ -12,6 +12,8 @@ import static org.mockito.Mockito.*;
 
 class ScheduledBackupServiceTest {
 
+    private static final long DEFAULT_INTERVAL = 86400000L; // 24 hours
+
     @Mock
     private BackupService backupService;
 
@@ -24,7 +26,7 @@ class ScheduledBackupServiceTest {
 
     @Test
     void testScheduledBackupService_WithNoUsers() {
-        scheduledBackupService = new ScheduledBackupService(backupService, "");
+        scheduledBackupService = new ScheduledBackupService(backupService, "", DEFAULT_INTERVAL);
         
         // Should not throw exception with empty users list
         assertDoesNotThrow(() -> scheduledBackupService.runScheduledBackup());
@@ -35,7 +37,7 @@ class ScheduledBackupServiceTest {
 
     @Test
     void testScheduledBackupService_WithSingleUser() throws IOException {
-        scheduledBackupService = new ScheduledBackupService(backupService, "octocat");
+        scheduledBackupService = new ScheduledBackupService(backupService, "octocat", DEFAULT_INTERVAL);
         
         scheduledBackupService.runScheduledBackup();
         
@@ -45,7 +47,7 @@ class ScheduledBackupServiceTest {
 
     @Test
     void testScheduledBackupService_WithMultipleUsers() throws IOException {
-        scheduledBackupService = new ScheduledBackupService(backupService, "octocat,github,spring-projects");
+        scheduledBackupService = new ScheduledBackupService(backupService, "octocat,github,spring-projects", DEFAULT_INTERVAL);
         
         scheduledBackupService.runScheduledBackup();
         
@@ -57,7 +59,7 @@ class ScheduledBackupServiceTest {
 
     @Test
     void testScheduledBackupService_WithWhitespace() throws IOException {
-        scheduledBackupService = new ScheduledBackupService(backupService, " octocat , github , spring-projects ");
+        scheduledBackupService = new ScheduledBackupService(backupService, " octocat , github , spring-projects ", DEFAULT_INTERVAL);
         
         scheduledBackupService.runScheduledBackup();
         
@@ -69,7 +71,7 @@ class ScheduledBackupServiceTest {
 
     @Test
     void testScheduledBackupService_HandlesException() throws IOException {
-        scheduledBackupService = new ScheduledBackupService(backupService, "octocat,github");
+        scheduledBackupService = new ScheduledBackupService(backupService, "octocat,github", DEFAULT_INTERVAL);
         
         doThrow(new IOException("Test exception")).when(backupService).backupUserRepositories("octocat");
         
@@ -82,7 +84,7 @@ class ScheduledBackupServiceTest {
 
     @Test
     void testScheduledBackupService_WithEmptyStrings() throws IOException {
-        scheduledBackupService = new ScheduledBackupService(backupService, "octocat,,github");
+        scheduledBackupService = new ScheduledBackupService(backupService, "octocat,,github", DEFAULT_INTERVAL);
         
         scheduledBackupService.runScheduledBackup();
         
@@ -94,11 +96,20 @@ class ScheduledBackupServiceTest {
 
     @Test
     void testScheduledBackupService_WithBlankString() {
-        scheduledBackupService = new ScheduledBackupService(backupService, "   ");
+        scheduledBackupService = new ScheduledBackupService(backupService, "   ", DEFAULT_INTERVAL);
         
         assertDoesNotThrow(() -> scheduledBackupService.runScheduledBackup());
         
         // Should not call backup service with blank configuration
         verifyNoInteractions(backupService);
+    }
+
+    @Test
+    void testScheduledBackupService_WithCustomInterval() {
+        long customInterval = 3600000L; // 1 hour
+        scheduledBackupService = new ScheduledBackupService(backupService, "octocat", customInterval);
+        
+        // Should not throw exception with custom interval
+        assertDoesNotThrow(() -> scheduledBackupService.runScheduledBackup());
     }
 }

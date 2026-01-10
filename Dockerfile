@@ -3,6 +3,8 @@ FROM maven:3.9-eclipse-temurin-17 AS build
 WORKDIR /app
 COPY pom.xml .
 COPY src ./src
+# Skip tests during Docker build to speed up image creation
+# Tests should be run in CI/CD pipeline before building the image
 RUN mvn clean package -DskipTests
 
 # Runtime stage
@@ -23,7 +25,8 @@ ENV BACKUP_DIRECTORY=/backups
 ENV GITHUB_TOKEN=""
 ENV SCHEDULED_USERS=""
 
-# Expose port for web mode (optional)
+# Expose port 8080 - only used if running in web mode with -Dspring.profiles.active=web
+# The default daemon mode does not use this port
 EXPOSE 8080
 
 # Create entrypoint script
