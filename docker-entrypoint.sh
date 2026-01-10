@@ -3,8 +3,13 @@ set -e
 
 # Build Java command with environment variables
 JAVA_OPTS="-Dspring.profiles.active=daemon"
-JAVA_OPTS="$JAVA_OPTS -Dbackup.directory=${BACKUP_DIRECTORY}"
 
+# Set backup directory if provided (defaults to /backups in Dockerfile ENV)
+if [ -n "$BACKUP_DIRECTORY" ]; then
+    JAVA_OPTS="$JAVA_OPTS -Dbackup.directory=${BACKUP_DIRECTORY}"
+fi
+
+# Set scheduled users if provided
 if [ -n "$SCHEDULED_USERS" ]; then
     JAVA_OPTS="$JAVA_OPTS -Dbackup.scheduled.users=${SCHEDULED_USERS}"
 fi

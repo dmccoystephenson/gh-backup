@@ -71,7 +71,8 @@ public class ScheduledBackupService {
         }
 
         String timestamp = LocalDateTime.now().format(dateTimeFormatter);
-        log.info("\n{}", "=".repeat(SEPARATOR_LENGTH));
+        log.info("");
+        log.info("{}", "=".repeat(SEPARATOR_LENGTH));
         log.info("Starting scheduled backup at {}", timestamp);
         log.info("{}", "=".repeat(SEPARATOR_LENGTH));
 
@@ -84,9 +85,11 @@ public class ScheduledBackupService {
         }
 
         timestamp = LocalDateTime.now().format(dateTimeFormatter);
-        log.info("\n{}", "=".repeat(SEPARATOR_LENGTH));
+        log.info("");
+        log.info("{}", "=".repeat(SEPARATOR_LENGTH));
         log.info("Scheduled backup completed at {}", timestamp);
         log.info("Next backup will run {} hours after this backup completes.", backupIntervalMs / 3600000.0);
-        log.info("{}\n", "=".repeat(SEPARATOR_LENGTH));
+        log.info("{}", "=".repeat(SEPARATOR_LENGTH));
+        log.info("");
     }
 }
