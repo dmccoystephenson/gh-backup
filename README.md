@@ -95,7 +95,7 @@ backups/
 1. The tool connects to the GitHub API (authenticated or anonymously)
 2. For each specified user/organization, it fetches all public repositories
 3. Each repository is cloned to the local backup directory
-4. If a repository already exists, it is updated with `git fetch` and `git pull`
+4. If a repository already exists, it is updated with `git fetch`
 
 ## Rate Limits
 
