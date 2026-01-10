@@ -2,12 +2,10 @@ package com.github.backup;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.io.IOException;
-import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -18,9 +16,6 @@ class ScheduledBackupServiceTest {
     private BackupService backupService;
 
     private ScheduledBackupService scheduledBackupService;
-
-    @TempDir
-    Path tempDir;
 
     @BeforeEach
     void setUp() {
@@ -91,10 +86,10 @@ class ScheduledBackupServiceTest {
         
         scheduledBackupService.runScheduledBackup();
         
-        // Should filter out empty strings
+        // Should filter out empty strings and only call for valid users
         verify(backupService, times(1)).backupUserRepositories("octocat");
         verify(backupService, times(1)).backupUserRepositories("github");
-        verify(backupService, times(2)).backupUserRepositories(anyString());
+        verifyNoMoreInteractions(backupService);
     }
 
     @Test
