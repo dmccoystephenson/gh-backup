@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  gh-backup-daemon:
+    build: .
+    container_name: gh-backup-daemon
+    restart: unless-stopped
+    environment:
+      # Set your GitHub personal access token here for higher API rate limits
+      - GITHUB_TOKEN=${GITHUB_TOKEN:-}
+      
+      # Comma-separated list of GitHub users/organizations to backup
+      # Example: SCHEDULED_USERS=octocat,github,spring-projects
+      - SCHEDULED_USERS=${SCHEDULED_USERS:-}
+      
+      # Optional: Custom backup directory inside container
+      - BACKUP_DIRECTORY=/backups
+    volumes:
+      # Mount a local directory to persist backups
+      - ./backups:/backups
+    # Keep container running
+    stdin_open: true
+    tty: true

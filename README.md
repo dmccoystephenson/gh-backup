@@ -5,6 +5,7 @@ A tool built with Spring Boot to backup public GitHub repositories for specified
 ## Features
 
 - **Web UI** for easy backup management through your browser
+- **Daemon Mode** with Docker support for automatic daily backups
 - Backup all public repositories from one or more GitHub users/organizations
 - Clone new repositories or update existing ones
 - **Interactive mode** for easier management and status viewing
@@ -31,6 +32,71 @@ mvn clean package
 The executable JAR will be created at `target/gh-backup-1.0.0.jar`
 
 ## Usage
+
+### Daemon Mode with Docker (Automatic Daily Backups)
+
+The easiest way to run automatic daily backups is using Docker. This will spin up a background service that backs up your configured repositories every 24 hours.
+
+#### Quick Start with Docker Compose
+
+1. Create a `.env` file (or copy from `.env.example`):
+```bash
+cp .env.example .env
+```
+
+2. Edit `.env` to configure your backups:
+```bash
+GITHUB_TOKEN=your_github_token_here
+SCHEDULED_USERS=octocat,github,spring-projects
+```
+
+3. Start the daemon service:
+```bash
+docker-compose up -d
+```
+
+The service will:
+- Run the first backup immediately
+- Continue running in the background
+- Automatically backup every 24 hours
+- Persist backups to the `./backups` directory on your host machine
+
+4. View logs:
+```bash
+docker-compose logs -f
+```
+
+5. Stop the service:
+```bash
+docker-compose down
+```
+
+#### Using Docker directly
+
+Build the image:
+```bash
+docker build -t gh-backup .
+```
+
+Run the daemon:
+```bash
+docker run -d \
+  -e GITHUB_TOKEN=your_token \
+  -e SCHEDULED_USERS=octocat,github \
+  -v $(pwd)/backups:/backups \
+  --name gh-backup-daemon \
+  gh-backup
+```
+
+#### Running without Docker
+
+You can also run daemon mode directly with Java:
+```bash
+java -Dspring.profiles.active=daemon \
+     -Dbackup.scheduled.users=octocat,github \
+     -Dbackup.directory=/path/to/backups \
+     -jar target/gh-backup-1.0.0.jar
+```
 
 ### Web UI Mode (Recommended)
 
