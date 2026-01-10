@@ -57,7 +57,6 @@ public class BackupService {
             // Update existing repository
             try (Git git = Git.open(localPath)) {
                 git.fetch().call();
-                git.pull().call();
                 System.out.println(" updated");
             } catch (IOException e) {
                 System.err.println(" failed to update: " + e.getMessage());
@@ -65,7 +64,7 @@ public class BackupService {
         } else {
             // Clone new repository
             Git.cloneRepository()
-                    .setURI(repo.getHtmlUrl().toString())
+                    .setURI(repo.getHttpTransportUrl())
                     .setDirectory(localPath)
                     .call()
                     .close();
