@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -45,6 +47,47 @@ public class BackupService {
                 System.err.println("Failed to backup " + repo.getName() + ": " + e.getMessage());
             }
         }
+    }
+
+    public void showBackupStatus() {
+        File backupDir = new File(backupDirectory);
+        
+        if (!backupDir.exists() || !backupDir.isDirectory()) {
+            System.out.println("No backups found. Backup directory does not exist: " + backupDirectory);
+            return;
+        }
+
+        File[] userDirs = backupDir.listFiles(File::isDirectory);
+        
+        if (userDirs == null || userDirs.length == 0) {
+            System.out.println("No backups found.");
+            return;
+        }
+
+        System.out.println("\nBackup Status");
+        System.out.println("=============");
+        System.out.println("Backup directory: " + backupDir.getAbsolutePath());
+        System.out.println();
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        int totalRepos = 0;
+
+        for (File userDir : userDirs) {
+            File[] repos = userDir.listFiles(File::isDirectory);
+            if (repos == null) continue;
+
+            System.out.println(userDir.getName() + "/ (" + repos.length + " repositories)");
+            
+            for (File repo : repos) {
+                totalRepos++;
+                long lastModified = repo.lastModified();
+                String lastModifiedStr = dateFormat.format(new Date(lastModified));
+                System.out.println("  - " + repo.getName() + " (last updated: " + lastModifiedStr + ")");
+            }
+            System.out.println();
+        }
+
+        System.out.println("Total: " + userDirs.length + " users/organizations, " + totalRepos + " repositories");
     }
 
     private void backupRepository(GHRepository repo, Path backupPath) throws GitAPIException {

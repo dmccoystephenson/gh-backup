@@ -6,6 +6,7 @@ A command-line tool built with Spring Boot to backup public GitHub repositories 
 
 - Backup all public repositories from one or more GitHub users/organizations
 - Clone new repositories or update existing ones
+- **Interactive mode** for easier management and status viewing
 - Support for authenticated and anonymous GitHub API access
 - Parallel backup of multiple users/organizations
 - Organized backup structure by user/organization
@@ -29,6 +30,42 @@ mvn clean package
 The executable JAR will be created at `target/gh-backup-1.0.0.jar`
 
 ## Usage
+
+### Interactive Mode
+
+Start the tool in interactive mode for easier management:
+
+```bash
+java -jar target/gh-backup-1.0.0.jar -i
+```
+
+In interactive mode, you can:
+- Type `backup <user/org>` to backup a user or organization's repositories
+- Type `status` to view current backup status and list all backed up repositories
+- Type `exit` to quit
+
+Example session:
+```
+> backup octocat
+Fetching repositories for: octocat
+Found 8 public repositories
+...
+
+> status
+Backup Status
+=============
+Backup directory: /path/to/backups
+
+octocat/ (8 repositories)
+  - Hello-World (last updated: 2026-01-10 12:30:45)
+  - Spoon-Knife (last updated: 2026-01-10 12:30:47)
+  ...
+
+Total: 1 users/organizations, 8 repositories
+
+> exit
+Exiting interactive mode...
+```
 
 ### Basic Usage
 
