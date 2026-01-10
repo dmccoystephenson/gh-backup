@@ -20,6 +20,9 @@ import java.util.List;
 @ConditionalOnProperty(name = "backup.mode", havingValue = "daemon")
 public class ScheduledBackupService {
 
+    private static final long BACKUP_INTERVAL_MS = 86400000; // 24 hours in milliseconds
+    private static final int SEPARATOR_LENGTH = 80;
+
     private final BackupService backupService;
     private final List<String> scheduledUsers;
     private final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -54,18 +57,18 @@ public class ScheduledBackupService {
 
     /**
      * Runs backup for all configured users/organizations.
-     * Executes on startup and then every 24 hours (86400000 milliseconds).
+     * Executes on startup and then every 24 hours.
      */
-    @Scheduled(fixedRate = 86400000, initialDelay = 0)
+    @Scheduled(fixedRate = BACKUP_INTERVAL_MS, initialDelay = 0)
     public void runScheduledBackup() {
         if (scheduledUsers.isEmpty()) {
             return;
         }
 
         String timestamp = LocalDateTime.now().format(dateTimeFormatter);
-        System.out.println("\n" + "=".repeat(80));
+        System.out.println("\n" + "=".repeat(SEPARATOR_LENGTH));
         System.out.println("Starting scheduled backup at " + timestamp);
-        System.out.println("=".repeat(80));
+        System.out.println("=".repeat(SEPARATOR_LENGTH));
 
         for (String userOrOrg : scheduledUsers) {
             try {
@@ -76,9 +79,9 @@ public class ScheduledBackupService {
         }
 
         timestamp = LocalDateTime.now().format(dateTimeFormatter);
-        System.out.println("\n" + "=".repeat(80));
+        System.out.println("\n" + "=".repeat(SEPARATOR_LENGTH));
         System.out.println("Scheduled backup completed at " + timestamp);
         System.out.println("Next backup will run in 24 hours.");
-        System.out.println("=".repeat(80) + "\n");
+        System.out.println("=".repeat(SEPARATOR_LENGTH) + "\n");
     }
 }
