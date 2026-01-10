@@ -2,7 +2,14 @@
 const API_BASE = '/api/backups';
 
 // View state
-let currentView = 'list'; // 'list' or 'card'
+let currentView = 'list'; // 'list', 'card', or 'gallery'
+
+// Color palette for gallery view
+const COLOR_PALETTE = [
+    '#667eea', '#764ba2', '#f093fb', '#4facfe',
+    '#43e97b', '#fa709a', '#fee140', '#30cfd0',
+    '#a8edea', '#fed6e3', '#c471f5', '#12c2e9'
+];
 
 // DOM elements
 const backupForm = document.getElementById('backupForm');
@@ -16,6 +23,7 @@ const refreshSpinner = document.getElementById('refreshSpinner');
 const statusContent = document.getElementById('statusContent');
 const listViewBtn = document.getElementById('listViewBtn');
 const cardViewBtn = document.getElementById('cardViewBtn');
+const galleryViewBtn = document.getElementById('galleryViewBtn');
 
 // Load status on page load
 document.addEventListener('DOMContentLoaded', () => {
@@ -82,28 +90,48 @@ cardViewBtn.addEventListener('click', () => {
     setView('card');
 });
 
+galleryViewBtn.addEventListener('click', () => {
+    setView('gallery');
+});
+
 // Set view mode
 function setView(view) {
     currentView = view;
     localStorage.setItem('backupView', view);
     
     // Update button states
+    listViewBtn.classList.remove('active');
+    cardViewBtn.classList.remove('active');
+    galleryViewBtn.classList.remove('active');
+    
     if (view === 'list') {
         listViewBtn.classList.add('active');
-        cardViewBtn.classList.remove('active');
-    } else {
+    } else if (view === 'card') {
         cardViewBtn.classList.add('active');
-        listViewBtn.classList.remove('active');
+    } else if (view === 'gallery') {
+        galleryViewBtn.classList.add('active');
     }
     
     // Update display if content is already loaded
     const userList = document.querySelector('.user-list');
+    const galleryColorKey = document.querySelector('.gallery-color-key');
+    const galleryRepos = document.querySelector('.gallery-repos');
+    
     if (userList) {
+        userList.classList.remove('card-view', 'gallery-view');
         if (view === 'card') {
             userList.classList.add('card-view');
-        } else {
-            userList.classList.remove('card-view');
+        } else if (view === 'gallery') {
+            userList.classList.add('gallery-view');
         }
+    }
+    
+    if (galleryColorKey) {
+        galleryColorKey.style.display = view === 'gallery' ? 'block' : 'none';
+    }
+    
+    if (galleryRepos) {
+        galleryRepos.style.display = view === 'gallery' ? 'grid' : 'none';
     }
 }
 
@@ -141,6 +169,12 @@ function displayStatus(data) {
         return;
     }
     
+    // Assign colors to users
+    const userColors = {};
+    data.users.forEach((user, index) => {
+        userColors[user.name] = COLOR_PALETTE[index % COLOR_PALETTE.length];
+    });
+    
     let html = `
         <div class="status-summary">
             <div class="stat-card">
@@ -152,7 +186,55 @@ function displayStatus(data) {
                 <div class="stat-value">${data.totalRepositories}</div>
             </div>
         </div>
-        <div class="user-list${currentView === 'card' ? ' card-view' : ''}">
+    `;
+    
+    // Add color key for gallery view
+    html += `
+        <div class="gallery-color-key" style="display: ${currentView === 'gallery' ? 'block' : 'none'}">
+            <h3>📌 Color Key</h3>
+            <div class="color-key-items">
+    `;
+    
+    data.users.forEach(user => {
+        html += `
+            <div class="color-key-item">
+                <div class="color-key-swatch" style="background: ${userColors[user.name]}"></div>
+                <span class="color-key-label">${escapeHtml(user.name)}</span>
+            </div>
+        `;
+    });
+    
+    html += `
+            </div>
+        </div>
+    `;
+    
+    // Add gallery repos view
+    html += `
+        <div class="gallery-repos" style="display: ${currentView === 'gallery' ? 'grid' : 'none'}">
+    `;
+    
+    data.users.forEach(user => {
+        user.repositories.forEach(repo => {
+            html += `
+                <div class="gallery-repo-card" style="--card-color: ${userColors[user.name]}">
+                    <div>
+                        <div class="gallery-repo-name">${escapeHtml(repo.name)}</div>
+                        <div class="gallery-repo-source">${escapeHtml(user.name)}</div>
+                    </div>
+                    <div class="gallery-repo-updated">Updated: ${escapeHtml(repo.lastUpdated)}</div>
+                </div>
+            `;
+        });
+    });
+    
+    html += `
+        </div>
+    `;
+    
+    // Add regular list view
+    html += `
+        <div class="user-list${currentView === 'card' ? ' card-view' : ''}${currentView === 'gallery' ? ' gallery-view' : ''}">
     `;
     
     data.users.forEach(user => {

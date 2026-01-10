@@ -278,6 +278,123 @@ input[type="text"]:focus {
     font-size: 0.75rem;
 }
 
+/* Gallery View Styles */
+.user-list.gallery-view {
+    display: block;
+}
+
+.gallery-color-key {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.gallery-color-key h3 {
+    font-size: 1rem;
+    color: #667eea;
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+.color-key-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.color-key-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    background: #f8f9fa;
+    border-radius: 6px;
+}
+
+.color-key-swatch {
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.color-key-label {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #555;
+}
+
+.gallery-repos {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 15px;
+}
+
+.gallery-repo-card {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    min-height: 140px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.gallery-repo-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 6px;
+    background: var(--card-color);
+}
+
+.gallery-repo-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+.gallery-repo-name {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 8px;
+    word-break: break-word;
+}
+
+.gallery-repo-source {
+    font-size: 0.85rem;
+    color: var(--card-color);
+    font-weight: 600;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.gallery-repo-source::before {
+    content: '●';
+    font-size: 1.2rem;
+}
+
+.gallery-repo-updated {
+    font-size: 0.75rem;
+    color: #999;
+    margin-top: auto;
+}
+
+.user-list.gallery-view .user-item {
+    display: none;
+}
+
 .user-header {
     display: flex;
     justify-content: space-between;
