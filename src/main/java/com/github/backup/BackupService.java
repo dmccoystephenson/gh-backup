@@ -76,7 +76,10 @@ public class BackupService {
 
         for (File userDir : userDirs) {
             File[] repos = userDir.listFiles(File::isDirectory);
-            if (repos == null) continue;
+            if (repos == null) {
+                System.err.println("Warning: Unable to read directory: " + userDir.getName());
+                continue;
+            }
 
             System.out.println(userDir.getName() + "/ (" + repos.length + " repositories)");
             
