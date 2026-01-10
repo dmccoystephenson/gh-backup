@@ -10,8 +10,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Service
@@ -69,7 +70,8 @@ public class BackupService {
         System.out.println("Backup directory: " + backupDir.getAbsolutePath());
         System.out.println();
 
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+                .withZone(ZoneId.systemDefault());
         int totalRepos = 0;
 
         for (File userDir : userDirs) {
@@ -81,7 +83,7 @@ public class BackupService {
             for (File repo : repos) {
                 totalRepos++;
                 long lastModified = repo.lastModified();
-                String lastModifiedStr = dateFormat.format(new Date(lastModified));
+                String lastModifiedStr = dateFormat.format(Instant.ofEpochMilli(lastModified));
                 System.out.println("  - " + repo.getName() + " (last updated: " + lastModifiedStr + ")");
             }
             System.out.println();

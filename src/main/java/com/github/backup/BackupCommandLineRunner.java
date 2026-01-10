@@ -105,6 +105,7 @@ public class BackupCommandLineRunner implements CommandLineRunner {
             }
         }
 
-        scanner.close();
+        // Note: We intentionally don't close the scanner since it wraps System.in
+        // Closing it would close System.in for the entire JVM process
     }
 }
