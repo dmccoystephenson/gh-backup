@@ -164,7 +164,7 @@ public class BackupService {
             }
             lastUpdateTime = currentTime;
 
-            if (totalWork > 0 && this.completed <= totalWork) {
+            if (totalWork > 0 && this.completed < totalWork) {
                 int percentage = (int) ((this.completed * 100.0) / totalWork);
                 System.out.print("\r  " + currentTask + ": " + percentage + "%");
             }
@@ -185,7 +185,8 @@ public class BackupService {
 
         @Override
         public void showDuration(boolean enabled) {
-            // Not used in this implementation
+            // Controls whether the monitor should display operation duration
+            // Not implemented in this basic progress monitor
         }
     }
 }
