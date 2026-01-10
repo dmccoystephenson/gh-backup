@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitHub Backup Manager</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🗂️ GitHub Backup Manager</h1>
+            <p class="subtitle">Manage your GitHub repository backups</p>
+        </header>
+
+        <main>
+            <section class="backup-section">
+                <h2>Create New Backup</h2>
+                <form id="backupForm">
+                    <div class="form-group">
+                        <label for="userOrOrg">GitHub User or Organization:</label>
+                        <input 
+                            type="text" 
+                            id="userOrOrg" 
+                            name="userOrOrg" 
+                            placeholder="e.g., octocat" 
+                            required
+                        >
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <span id="backupButtonText">Start Backup</span>
+                        <span id="backupSpinner" class="spinner" style="display: none;"></span>
+                    </button>
+                </form>
+                <div id="backupMessage" class="message"></div>
+            </section>
+
+            <section class="status-section">
+                <div class="section-header">
+                    <h2>Backup Status</h2>
+                    <div class="header-controls">
+                        <div class="view-toggle">
+                            <button id="listViewBtn" class="btn-icon active" title="List View" aria-label="Switch to list view">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                    <line x1="8" y1="6" x2="21" y2="6"></line>
+                                    <line x1="8" y1="12" x2="21" y2="12"></line>
+                                    <line x1="8" y1="18" x2="21" y2="18"></line>
+                                    <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                                    <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                                    <line x1="3" y1="18" x2="3.01" y2="18"></line>
+                                </svg>
+                            </button>
+                            <button id="cardViewBtn" class="btn-icon" title="Card View" aria-label="Switch to card view">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                    <rect x="3" y="3" width="7" height="7"></rect>
+                                    <rect x="14" y="3" width="7" height="7"></rect>
+                                    <rect x="14" y="14" width="7" height="7"></rect>
+                                    <rect x="3" y="14" width="7" height="7"></rect>
+                                </svg>
+                            </button>
+                            <button id="galleryViewBtn" class="btn-icon" title="Gallery View" aria-label="Switch to gallery view">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                    <circle cx="12" cy="8" r="4"></circle>
+                                    <circle cx="6" cy="17" r="3"></circle>
+                                    <circle cx="18" cy="17" r="3"></circle>
+                                </svg>
+                            </button>
+                        </div>
+                        <button id="refreshBtn" class="btn btn-secondary">
+                            <span id="refreshButtonText">Refresh</span>
+                            <span id="refreshSpinner" class="spinner" style="display: none;"></span>
+                        </button>
+                    </div>
+                </div>
+                <div id="statusContent">
+                    <p class="loading">Loading status...</p>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>GitHub Backup Tool - <a href="https://github.com/dmccoystephenson/gh-backup" target="_blank">View on GitHub</a></p>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

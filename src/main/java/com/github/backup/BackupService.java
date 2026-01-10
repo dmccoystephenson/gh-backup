@@ -1,5 +1,8 @@
 package com.github.backup;
 
+import com.github.backup.web.BackupStatusResponse;
+import com.github.backup.web.BackupStatusResponse.RepositoryInfo;
+import com.github.backup.web.BackupStatusResponse.UserBackupInfo;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.ProgressMonitor;
@@ -113,6 +116,44 @@ public class BackupService {
         }
 
         System.out.println("Total: " + userDirs.length + " users/organizations, " + totalRepos + " repositories");
+    }
+
+    public BackupStatusResponse getBackupStatusData() {
+        File backupDir = new File(backupDirectory);
+        
+        if (!backupDir.exists() || !backupDir.isDirectory()) {
+            return new BackupStatusResponse(0, 0, new ArrayList<>());
+        }
+
+        File[] userDirs = backupDir.listFiles(File::isDirectory);
+        
+        if (userDirs == null || userDirs.length == 0) {
+            return new BackupStatusResponse(0, 0, new ArrayList<>());
+        }
+
+        DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+                .withZone(ZoneId.systemDefault());
+        int totalRepos = 0;
+        List<UserBackupInfo> users = new ArrayList<>();
+
+        for (File userDir : userDirs) {
+            File[] repos = userDir.listFiles(File::isDirectory);
+            if (repos == null) {
+                continue;
+            }
+
+            List<RepositoryInfo> repositories = new ArrayList<>();
+            for (File repo : repos) {
+                totalRepos++;
+                long lastModified = repo.lastModified();
+                String lastModifiedStr = dateFormat.format(Instant.ofEpochMilli(lastModified));
+                repositories.add(new RepositoryInfo(repo.getName(), lastModifiedStr));
+            }
+            
+            users.add(new UserBackupInfo(userDir.getName(), repos.length, repositories));
+        }
+
+        return new BackupStatusResponse(userDirs.length, totalRepos, users);
     }
 
     private void backupRepository(GHRepository repo, Path backupPath) throws GitAPIException {

@@ -1,9 +1,10 @@
 # gh-backup
 
-A command-line tool built with Spring Boot to backup public GitHub repositories for specified users or organizations.
+A tool built with Spring Boot to backup public GitHub repositories for specified users or organizations. Available as both a command-line tool and a web application.
 
 ## Features
 
+- **Web UI** for easy backup management through your browser
 - Backup all public repositories from one or more GitHub users/organizations
 - Clone new repositories or update existing ones
 - **Interactive mode** for easier management and status viewing
@@ -30,6 +31,26 @@ mvn clean package
 The executable JAR will be created at `target/gh-backup-1.0.0.jar`
 
 ## Usage
+
+### Web UI Mode (Recommended)
+
+Start the web server:
+
+```bash
+java -Dspring.profiles.active=web -jar target/gh-backup-1.0.0.jar
+```
+
+Then open your browser and navigate to `http://localhost:8080` to access the web interface.
+
+The web UI allows you to:
+- Create new backups by entering a GitHub user or organization name
+- View the status of all your backups
+- See a list of all backed up repositories with their last update times
+
+To use a custom port:
+```bash
+java -Dspring.profiles.active=web -Dserver.port=9000 -jar target/gh-backup-1.0.0.jar
+```
 
 ### Interactive Mode
 
