@@ -56,12 +56,19 @@ public class GitHubService {
                     .filter(repo -> !repo.isPrivate())
                     .collect(Collectors.toList());
         } catch (IOException userException) {
-            // Neither organization nor user found
-            throw new IOException(
-                "'" + userOrOrg + "' not found as GitHub organization or user. " +
-                "Please verify the name is correct.", 
-                userException
-            );
+            // Check if this is a 404 (not found) error
+            String errorMessage = userException.getMessage();
+            if (errorMessage != null && errorMessage.contains("404")) {
+                // Actually not found - provide helpful message
+                throw new IOException(
+                    "'" + userOrOrg + "' not found as GitHub organization or user. " +
+                    "Please verify the name is correct.", 
+                    userException
+                );
+            } else {
+                // Some other error (rate limit, network, etc.) - preserve original error
+                throw userException;
+            }
         }
     }
 }
