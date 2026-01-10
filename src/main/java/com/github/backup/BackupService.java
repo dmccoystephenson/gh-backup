@@ -2,6 +2,7 @@ package com.github.backup;
 
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.lib.ProgressMonitor;
 import org.kohsuke.github.GHRepository;
 import org.springframework.stereotype.Service;
 
@@ -104,19 +105,87 @@ public class BackupService {
         if (localPath.exists()) {
             // Update existing repository
             try (Git git = Git.open(localPath)) {
-                git.fetch().call();
+                git.fetch()
+                        .setProgressMonitor(new SimpleProgressMonitor())
+                        .call();
                 System.out.println(" updated");
             } catch (IOException e) {
                 System.err.println(" failed to update: " + e.getMessage());
             }
         } else {
             // Clone new repository
+            System.out.println();  // New line for progress output
             Git.cloneRepository()
                     .setURI(repo.getHttpTransportUrl())
                     .setDirectory(localPath)
+                    .setProgressMonitor(new SimpleProgressMonitor())
                     .call()
                     .close();
-            System.out.println(" cloned");
+            System.out.println("  ✓ Cloned successfully");
+        }
+    }
+
+    /**
+     * Simple progress monitor that shows cloning progress
+     */
+    private static class SimpleProgressMonitor implements ProgressMonitor {
+        private String currentTask;
+        private int totalWork;
+        private int completed;
+        private long lastUpdateTime;
+        private static final long UPDATE_INTERVAL_MS = 500; // Update every 500ms
+
+        @Override
+        public void start(int totalTasks) {
+            // Called when the overall operation starts
+        }
+
+        @Override
+        public void beginTask(String title, int totalWork) {
+            this.currentTask = title;
+            this.totalWork = totalWork;
+            this.completed = 0;
+            this.lastUpdateTime = System.currentTimeMillis();
+            if (totalWork > 0) {
+                System.out.print("  " + title + ": 0%");
+            } else {
+                System.out.print("  " + title + "...");
+            }
+        }
+
+        @Override
+        public void update(int completed) {
+            this.completed += completed;
+            long currentTime = System.currentTimeMillis();
+            
+            // Throttle updates to avoid too much output
+            if (currentTime - lastUpdateTime < UPDATE_INTERVAL_MS) {
+                return;
+            }
+            lastUpdateTime = currentTime;
+
+            if (totalWork > 0 && this.completed <= totalWork) {
+                int percentage = (int) ((this.completed * 100.0) / totalWork);
+                System.out.print("\r  " + currentTask + ": " + percentage + "%");
+            }
+        }
+
+        @Override
+        public void endTask() {
+            if (totalWork > 0) {
+                System.out.print("\r  " + currentTask + ": 100%");
+            }
+            System.out.println();
+        }
+
+        @Override
+        public boolean isCancelled() {
+            return false;
+        }
+
+        @Override
+        public void showDuration(boolean enabled) {
+            // Not used in this implementation
         }
     }
 }
