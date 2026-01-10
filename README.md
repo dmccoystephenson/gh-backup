@@ -104,18 +104,25 @@ To create a GitHub personal access token:
 
 ### Custom Backup Directory
 
-By default, repositories are backed up to the `backups/` directory. To change this:
+By default, repositories are backed up to `~/gh-backups/` (user home directory). This works on both Linux and Windows. To use a custom location:
 
 ```bash
 java -Dbackup.directory=/path/to/backup -jar target/gh-backup-1.0.0.jar octocat
 ```
 
+Windows example:
+```bash
+java -Dbackup.directory=C:\Backups\GitHub -jar target/gh-backup-1.0.0.jar octocat
+```
+
+The backup directory path is automatically converted to an absolute path and normalized for cross-platform compatibility.
+
 ## Output Structure
 
-Repositories are organized by user/organization:
+Repositories are organized by user/organization in the backup directory:
 
 ```
-backups/
+~/gh-backups/
 ├── octocat/
 │   ├── Hello-World/
 │   ├── Spoon-Knife/

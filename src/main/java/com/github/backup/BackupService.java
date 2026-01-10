@@ -4,6 +4,7 @@ import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.ProgressMonitor;
 import org.kohsuke.github.GHRepository;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -22,9 +23,12 @@ public class BackupService {
     private final GitHubService gitHubService;
     private final String backupDirectory;
 
-    public BackupService(GitHubService gitHubService) {
+    public BackupService(GitHubService gitHubService, 
+                         @Value("${backup.directory}") String backupDirectory) {
         this.gitHubService = gitHubService;
-        this.backupDirectory = System.getProperty("backup.directory", "backups");
+        // Convert to absolute path to support both Linux and Windows
+        Path backupPath = Paths.get(backupDirectory).toAbsolutePath().normalize();
+        this.backupDirectory = backupPath.toString();
     }
 
     public void backupUserRepositories(String userOrOrg) throws IOException {
@@ -103,14 +107,15 @@ public class BackupService {
         System.out.print("Backing up " + repoName + "...");
 
         if (localPath.exists()) {
-            // Update existing repository
+            // Repository already exists - update it
             try (Git git = Git.open(localPath)) {
+                System.out.println(" (repository exists, updating)");
                 git.fetch()
                         .setProgressMonitor(new SimpleProgressMonitor())
                         .call();
-                System.out.println(" updated");
+                System.out.println("  ✓ Updated successfully");
             } catch (IOException e) {
-                System.err.println(" failed to update: " + e.getMessage());
+                System.err.println("  ✗ Failed to update: " + e.getMessage());
             }
         } else {
             // Clone new repository
