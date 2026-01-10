@@ -1,6 +1,9 @@
 // API endpoint - adjust based on your server configuration
 const API_BASE = '/api/backups';
 
+// View state
+let currentView = 'list'; // 'list' or 'card'
+
 // DOM elements
 const backupForm = document.getElementById('backupForm');
 const userOrOrgInput = document.getElementById('userOrOrg');
@@ -11,10 +14,16 @@ const refreshBtn = document.getElementById('refreshBtn');
 const refreshButtonText = document.getElementById('refreshButtonText');
 const refreshSpinner = document.getElementById('refreshSpinner');
 const statusContent = document.getElementById('statusContent');
+const listViewBtn = document.getElementById('listViewBtn');
+const cardViewBtn = document.getElementById('cardViewBtn');
 
 // Load status on page load
 document.addEventListener('DOMContentLoaded', () => {
     loadStatus();
+    
+    // Load saved view preference
+    const savedView = localStorage.getItem('backupView') || 'list';
+    setView(savedView);
 });
 
 // Handle backup form submission
@@ -64,6 +73,40 @@ refreshBtn.addEventListener('click', () => {
     loadStatus();
 });
 
+// Handle view toggle buttons
+listViewBtn.addEventListener('click', () => {
+    setView('list');
+});
+
+cardViewBtn.addEventListener('click', () => {
+    setView('card');
+});
+
+// Set view mode
+function setView(view) {
+    currentView = view;
+    localStorage.setItem('backupView', view);
+    
+    // Update button states
+    if (view === 'list') {
+        listViewBtn.classList.add('active');
+        cardViewBtn.classList.remove('active');
+    } else {
+        cardViewBtn.classList.add('active');
+        listViewBtn.classList.remove('active');
+    }
+    
+    // Update display if content is already loaded
+    const userList = document.querySelector('.user-list');
+    if (userList) {
+        if (view === 'card') {
+            userList.classList.add('card-view');
+        } else {
+            userList.classList.remove('card-view');
+        }
+    }
+}
+
 // Load backup status
 async function loadStatus() {
     setRefreshLoading(true);
@@ -109,7 +152,7 @@ function displayStatus(data) {
                 <div class="stat-value">${data.totalRepositories}</div>
             </div>
         </div>
-        <div class="user-list">
+        <div class="user-list${currentView === 'card' ? ' card-view' : ''}">
     `;
     
     data.users.forEach(user => {

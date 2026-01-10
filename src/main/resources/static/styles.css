@@ -147,6 +147,50 @@ input[type="text"]:focus {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.header-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.view-toggle {
+    display: flex;
+    gap: 4px;
+    background: white;
+    padding: 4px;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.btn-icon {
+    padding: 8px;
+    border: none;
+    background: transparent;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s;
+    color: #666;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-icon:hover {
+    background: #f0f0f0;
+    color: #667eea;
+}
+
+.btn-icon.active {
+    background: #667eea;
+    color: white;
+}
+
+.btn-icon svg {
+    display: block;
 }
 
 .status-section {
@@ -186,12 +230,52 @@ input[type="text"]:focus {
     margin-top: 20px;
 }
 
+.user-list.card-view {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 15px;
+}
+
 .user-item {
     background: white;
     padding: 20px;
     border-radius: 8px;
     margin-bottom: 15px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.user-list.card-view .user-item {
+    margin-bottom: 0;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.user-list.card-view .user-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.user-list.card-view .repo-list {
+    flex: 1;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.user-list.card-view .repo-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    padding: 8px;
+}
+
+.user-list.card-view .repo-name {
+    font-size: 0.9rem;
+}
+
+.user-list.card-view .repo-updated {
+    font-size: 0.75rem;
 }
 
 .user-header {
