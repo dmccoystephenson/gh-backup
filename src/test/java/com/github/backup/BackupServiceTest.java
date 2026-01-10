@@ -1,5 +1,6 @@
 package com.github.backup;
 
+import com.github.backup.web.BackupStatusResponse;
 import org.eclipse.jgit.api.Git;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -99,5 +100,70 @@ class BackupServiceTest {
                 .thenThrow(new IOException("Test exception"));
 
         assertThrows(IOException.class, () -> backupService.backupUserRepositories("erroruser"));
+    }
+
+    @Test
+    void testGetBackupStatusData_NoBackups() {
+        // Test with empty directory
+        BackupStatusResponse status = backupService.getBackupStatusData();
+        
+        assertNotNull(status);
+        assertEquals(0, status.getTotalUsers());
+        assertEquals(0, status.getTotalRepositories());
+        assertNotNull(status.getUsers());
+        assertTrue(status.getUsers().isEmpty());
+    }
+
+    @Test
+    void testGetBackupStatusData_WithBackups() throws IOException {
+        // Create a fake backup structure with multiple users
+        Path user1Dir = tempDir.resolve("user1");
+        Path repo1Dir = user1Dir.resolve("repo1");
+        Path repo2Dir = user1Dir.resolve("repo2");
+        Files.createDirectories(repo1Dir);
+        Files.createDirectories(repo2Dir);
+
+        Path user2Dir = tempDir.resolve("user2");
+        Path repo3Dir = user2Dir.resolve("repo3");
+        Files.createDirectories(repo3Dir);
+
+        BackupStatusResponse status = backupService.getBackupStatusData();
+        
+        assertNotNull(status);
+        assertEquals(2, status.getTotalUsers());
+        assertEquals(3, status.getTotalRepositories());
+        assertNotNull(status.getUsers());
+        assertEquals(2, status.getUsers().size());
+        
+        // Verify first user
+        BackupStatusResponse.UserBackupInfo user1 = status.getUsers().stream()
+                .filter(u -> "user1".equals(u.getName()))
+                .findFirst()
+                .orElse(null);
+        assertNotNull(user1);
+        assertEquals(2, user1.getRepositoryCount());
+        assertEquals(2, user1.getRepositories().size());
+        
+        // Verify second user
+        BackupStatusResponse.UserBackupInfo user2 = status.getUsers().stream()
+                .filter(u -> "user2".equals(u.getName()))
+                .findFirst()
+                .orElse(null);
+        assertNotNull(user2);
+        assertEquals(1, user2.getRepositoryCount());
+        assertEquals(1, user2.getRepositories().size());
+    }
+
+    @Test
+    void testGetBackupStatusData_NonExistentDirectory() {
+        // Test with non-existent directory
+        BackupService service = new BackupService(gitHubService, tempDir.resolve("nonexistent").toString());
+        
+        BackupStatusResponse status = service.getBackupStatusData();
+        
+        assertNotNull(status);
+        assertEquals(0, status.getTotalUsers());
+        assertEquals(0, status.getTotalRepositories());
+        assertTrue(status.getUsers().isEmpty());
     }
 }

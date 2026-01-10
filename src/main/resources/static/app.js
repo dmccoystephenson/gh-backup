@@ -58,6 +58,20 @@ backupForm.addEventListener('submit', async (e) => {
             body: JSON.stringify({ userOrOrg }),
         });
         
+        if (!response.ok) {
+            let errorMessage = 'Failed to create backup.';
+            try {
+                const errorData = await response.json();
+                if (errorData && errorData.message) {
+                    errorMessage = errorData.message;
+                }
+            } catch (parseError) {
+                errorMessage += ` Server returned status ${response.status}.`;
+            }
+            showMessage(errorMessage, 'error');
+            return;
+        }
+        
         const data = await response.json();
         
         if (data.success) {
@@ -141,6 +155,11 @@ async function loadStatus() {
     
     try {
         const response = await fetch(`${API_BASE}/status`);
+        
+        if (!response.ok) {
+            throw new Error(`Server returned status ${response.status}`);
+        }
+        
         const data = await response.json();
         
         displayStatus(data);

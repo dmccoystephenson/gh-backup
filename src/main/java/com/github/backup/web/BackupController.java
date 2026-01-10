@@ -4,11 +4,20 @@ import com.github.backup.BackupService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import jakarta.validation.Valid;
 import java.io.IOException;
+import java.util.Collections;
 
+/**
+ * REST controller for backup management operations.
+ * 
+ * Note on CSRF: CSRF protection is not required for this API because:
+ * 1. The API is designed to be consumed by the same-origin frontend
+ * 2. Spring Boot disables CSRF by default for stateless REST APIs
+ * 3. No session state is maintained between requests
+ */
 @RestController
 @RequestMapping("/api/backups")
-@CrossOrigin(origins = "*")
 public class BackupController {
 
     private final BackupService backupService;
@@ -18,7 +27,7 @@ public class BackupController {
     }
 
     @PostMapping
-    public ResponseEntity<BackupResponse> createBackup(@RequestBody BackupRequest request) {
+    public ResponseEntity<BackupResponse> createBackup(@Valid @RequestBody BackupRequest request) {
         try {
             backupService.backupUserRepositories(request.getUserOrOrg());
             return ResponseEntity.ok(new BackupResponse(true, "Backup completed successfully for " + request.getUserOrOrg()));
@@ -35,7 +44,7 @@ public class BackupController {
             return ResponseEntity.ok(status);
         } catch (Exception e) {
             return ResponseEntity.status(500)
-                    .body(new BackupStatusResponse(0, 0, null));
+                    .body(new BackupStatusResponse(0, 0, Collections.emptyList()));
         }
     }
 }
