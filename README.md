@@ -37,7 +37,7 @@ The executable JAR will be created at `target/gh-backup-1.0.0.jar`
 Start the web server:
 
 ```bash
-java -Dbackup.mode=web -jar target/gh-backup-1.0.0.jar
+java -Dspring.profiles.active=web -jar target/gh-backup-1.0.0.jar
 ```
 
 Then open your browser and navigate to `http://localhost:8080` to access the web interface.
@@ -49,7 +49,7 @@ The web UI allows you to:
 
 To use a custom port:
 ```bash
-java -Dbackup.mode=web -Dserver.port=9000 -jar target/gh-backup-1.0.0.jar
+java -Dspring.profiles.active=web -Dserver.port=9000 -jar target/gh-backup-1.0.0.jar
 ```
 
 ### Interactive Mode
