@@ -16,16 +16,29 @@ public class GitHubService {
 
     public GitHubService() throws IOException {
         String token = System.getenv("GITHUB_TOKEN");
+        GitHub githubClient;
+        
         if (token != null && !token.isEmpty()) {
-            this.github = new GitHubBuilder().withOAuthToken(token).build();
-            System.out.println("Connected to GitHub with authentication");
+            githubClient = new GitHubBuilder().withOAuthToken(token).build();
+            try {
+                // Validate that the provided token is valid and has access
+                githubClient.getMyself();
+                System.out.println("Connected to GitHub with authentication");
+            } catch (IOException e) {
+                System.err.println("Warning: Invalid or expired GITHUB_TOKEN detected. Falling back to anonymous GitHub access.");
+                githubClient = GitHub.connectAnonymously();
+                System.out.println("Connected to GitHub anonymously (rate limits apply)");
+            }
         } else {
-            this.github = GitHub.connectAnonymously();
+            githubClient = GitHub.connectAnonymously();
             System.out.println("Connected to GitHub anonymously (rate limits apply)");
         }
+        this.github = githubClient;
     }
 
     public List<GHRepository> getPublicRepositories(String userOrOrg) throws IOException {
+        IOException orgException = null;
+        
         try {
             // Try as organization first
             return github.getOrganization(userOrOrg).listRepositories().toList()
@@ -33,11 +46,22 @@ public class GitHubService {
                     .filter(repo -> !repo.isPrivate())
                     .collect(Collectors.toList());
         } catch (IOException e) {
+            orgException = e;
+        }
+        
+        try {
             // If not an organization, try as user
             return github.getUser(userOrOrg).listRepositories().toList()
                     .stream()
                     .filter(repo -> !repo.isPrivate())
                     .collect(Collectors.toList());
+        } catch (IOException userException) {
+            // Neither organization nor user found
+            throw new IOException(
+                "'" + userOrOrg + "' not found as GitHub organization or user. " +
+                "Please verify the name is correct.", 
+                userException
+            );
         }
     }
 }

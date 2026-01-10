@@ -53,16 +53,19 @@ public class BackupCommandLineRunner implements CommandLineRunner {
         System.out.println("GitHub Backup Tool - Interactive Mode");
         System.out.println("=====================================");
         System.out.println();
+        System.out.println("Commands:");
+        System.out.println("  backup <user/org>  - Backup repositories for a user or organization");
+        System.out.println("  status             - View current backup status");
+        System.out.println("  help               - Show available commands");
+        System.out.println("  exit               - Exit interactive mode");
+        System.out.println();
         
+        @SuppressWarnings("resource") // Scanner wraps System.in, which should not be closed
         Scanner scanner = new Scanner(System.in);
         boolean running = true;
 
         while (running) {
-            System.out.println("\nCommands:");
-            System.out.println("  backup <user/org>  - Backup repositories for a user or organization");
-            System.out.println("  status             - View current backup status");
-            System.out.println("  exit               - Exit interactive mode");
-            System.out.print("\n> ");
+            System.out.print("> ");
 
             String input = scanner.nextLine().trim();
 
@@ -92,6 +95,15 @@ public class BackupCommandLineRunner implements CommandLineRunner {
                     backupService.showBackupStatus();
                     break;
 
+                case "help":
+                    System.out.println("\nAvailable Commands:");
+                    System.out.println("  backup <user/org>  - Backup repositories for a user or organization");
+                    System.out.println("  status             - View current backup status");
+                    System.out.println("  help               - Show this help message");
+                    System.out.println("  exit               - Exit interactive mode");
+                    System.out.println();
+                    break;
+
                 case "exit":
                 case "quit":
                     System.out.println("Exiting interactive mode...");
@@ -100,7 +112,7 @@ public class BackupCommandLineRunner implements CommandLineRunner {
 
                 default:
                     System.out.println("Unknown command: " + command);
-                    System.out.println("Type 'exit' to quit or use one of the available commands.");
+                    System.out.println("Type 'help' for available commands or 'exit' to quit.");
                     break;
             }
         }
