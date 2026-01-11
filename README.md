@@ -1,5 +1,7 @@
 # gh-backup
 
+![CI](https://github.com/dmccoystephenson/gh-backup/workflows/CI/badge.svg)
+
 A tool built with Spring Boot to backup public GitHub repositories for specified users or organizations. Available as both a command-line tool and a web application.
 
 ## Features
