@@ -1,0 +1,133 @@
+# User Guide
+
+## Prerequisites
+
+- Java 17 or higher installed on your system
+- Git installed on your system (required for cloning repositories)
+- A GitHub personal access token (optional, but recommended for higher API rate limits)
+
+## First Steps
+
+After building the project (`mvn clean package`), you can start backing up GitHub repositories immediately.
+
+### Quick Start – CLI Mode
+
+Back up all public repositories of a GitHub user or organization:
+
+```bash
+java -jar target/gh-backup-1.0.0.jar octocat
+```
+
+Repositories will be saved to `~/gh-backups/` by default.
+
+### Quick Start – Web UI Mode
+
+Start the web server:
+
+```bash
+java -Dspring.profiles.active=web -jar target/gh-backup-1.0.0.jar
+```
+
+Open `http://localhost:8080` in your browser to use the web interface.
+
+## Common Scenarios
+
+### Backing up a single user or organization
+
+```bash
+java -jar target/gh-backup-1.0.0.jar octocat
+```
+
+### Backing up multiple users or organizations at once
+
+```bash
+java -jar target/gh-backup-1.0.0.jar octocat github spring-projects
+```
+
+### Using GitHub authentication for higher rate limits
+
+Set the `GITHUB_TOKEN` environment variable before running:
+
+```bash
+export GITHUB_TOKEN=your_github_token_here
+java -jar target/gh-backup-1.0.0.jar octocat
+```
+
+To create a token: GitHub Settings → Developer settings → Personal access tokens → Generate new token. The `public_repo` scope is sufficient for public repositories.
+
+### Using a custom backup directory
+
+```bash
+java -Dbackup.directory=/path/to/backup -jar target/gh-backup-1.0.0.jar octocat
+```
+
+Windows example:
+```bat
+java -Dbackup.directory=C:\Backups\GitHub -jar target/gh-backup-1.0.0.jar octocat
+```
+
+### Using interactive mode
+
+Start in interactive mode for an on-screen menu:
+
+```bash
+java -jar target/gh-backup-1.0.0.jar -i
+```
+
+Available interactive commands:
+
+| Command | Description |
+|---------|-------------|
+| `backup <user/org>` | Back up all public repositories for the specified user or organization |
+| `status` | Show the backup directory, number of users/organizations, and a list of all backed up repositories |
+| `exit` | Quit the interactive session |
+
+### Example interactive session
+
+```
+> backup octocat
+Fetching repositories for: octocat
+Found 8 public repositories
+...
+
+> status
+Backup Status
+=============
+Backup directory: /home/user/gh-backups
+
+octocat/ (8 repositories)
+  - Hello-World (last updated: 2026-01-10 12:30:45)
+  - Spoon-Knife (last updated: 2026-01-10 12:30:47)
+  ...
+
+Total: 1 users/organizations, 8 repositories
+
+> exit
+Exiting interactive mode...
+```
+
+## Output Structure
+
+Repositories are organized by user or organization inside the backup directory:
+
+```
+~/gh-backups/
+├── octocat/
+│   ├── Hello-World/
+│   ├── Spoon-Knife/
+│   └── ...
+└── github/
+    ├── docs/
+    └── roadmap/
+```
+
+Each subdirectory is a full Git repository. If a repository already exists on disk, running the tool again will update it with `git fetch`.
+
+## Rate Limits
+
+| Access type | Limit |
+|-------------|-------|
+| Anonymous | 60 requests per hour |
+| Authenticated (token) | 5,000 requests per hour |
+
+Using a GitHub token is strongly recommended when backing up users or organizations with many repositories.
