@@ -25,8 +25,9 @@ ENV BACKUP_DIRECTORY=/backups
 ENV GITHUB_TOKEN=""
 ENV SCHEDULED_USERS=""
 
-# Expose port 8080 - only used if running in web mode with -Dspring.profiles.active=web
-# The default daemon mode does not use this port
+# Expose port 8080 for optional web mode.
+# The default image entrypoint runs in daemon mode, so this port is only used if the
+# container is started in web mode by overriding the default startup behavior.
 EXPOSE 8080
 
 # Create entrypoint script

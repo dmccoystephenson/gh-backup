@@ -37,10 +37,10 @@ class SchedulingConfigurationTest {
         
         @Test
         void scheduledBackupServiceShouldBeLoadedInDaemonProfile() {
-            // In daemon profile with backup.mode=daemon, ScheduledBackupService should be loaded
-            // Note: This requires backup.mode=daemon to be set
-            assertTrue(applicationContext.containsBean("schedulingConfiguration"),
-                    "SchedulingConfiguration bean should be present in daemon profile");
+            assertTrue(applicationContext.containsBean("scheduledBackupService"),
+                    "ScheduledBackupService should be present in daemon profile");
+            assertNotNull(applicationContext.getBean("scheduledBackupService"),
+                    "ScheduledBackupService bean should be retrievable in daemon profile");
         }
     }
     

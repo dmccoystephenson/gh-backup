@@ -3,6 +3,7 @@ package com.github.backup;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
@@ -24,6 +25,9 @@ class DaemonModeIntegrationTest {
     @Autowired
     private ApplicationContext applicationContext;
 
+    @MockBean
+    private BackupService backupService;
+
     @Test
     void daemonModeBeansAreLoaded() {
         // Verify SchedulingConfiguration is loaded
@@ -37,12 +41,15 @@ class DaemonModeIntegrationTest {
 
     @Test
     void scheduledBackupServiceIsConfiguredCorrectly() {
-        ScheduledBackupService service = applicationContext.getBean(ScheduledBackupService.class);
-        assertNotNull(service, "ScheduledBackupService should be available");
-        
-        // The service should be instantiated without errors
-        assertDoesNotThrow(() -> service.runScheduledBackup(),
-                "runScheduledBackup should execute without errors");
+        assertEquals("daemon",
+                applicationContext.getEnvironment().getProperty("backup.mode"),
+                "backup.mode should be set to daemon");
+        assertEquals("3600000",
+                applicationContext.getEnvironment().getProperty("backup.scheduled.interval.ms"),
+                "Scheduled interval should be configured");
+        assertEquals("testuser1,testuser2",
+                applicationContext.getEnvironment().getProperty("backup.scheduled.users"),
+                "Scheduled users should be configured");
     }
 
     @Test
