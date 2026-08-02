@@ -26,16 +26,42 @@ java -Dbackup.directory=C:\Backups\GitHub -jar target/gh-backup-1.0.0.jar octoca
 
 ## backup.mode
 
-**Type:** string (`cli` | `web`)  
+**Type:** string (`cli` | `web` | `daemon`)  
 **Default:** `cli`  
-**Description:** Controls whether the application runs as a command-line tool (`cli`) or as a web server (`web`). Use `web` by activating the `web` Spring profile.
+**Description:** Controls whether the application runs as a command-line tool (`cli`), a web server (`web`), or a background daemon that runs scheduled backups (`daemon`). Use `web` or `daemon` by activating the corresponding Spring profile.
 
 **Override at runtime:**
 ```bash
 java -Dspring.profiles.active=web -jar target/gh-backup-1.0.0.jar
 ```
 
-The `web` profile (`application-web.properties`) automatically sets `backup.mode=web` and enables the servlet web application type.
+The `web` profile (`application-web.properties`) automatically sets `backup.mode=web` and enables the servlet web application type. The `daemon` profile (`application-daemon.properties`) automatically sets `backup.mode=daemon` and disables the embedded web server.
+
+---
+
+## backup.scheduled.users
+
+**Type:** string (comma-separated list)  
+**Default:** *(empty)*  
+**Description:** The GitHub users/organizations to back up automatically when running in daemon mode (`-Dspring.profiles.active=daemon`). If empty, the daemon logs a warning on startup and performs no scheduled backups.
+
+**Override at runtime:**
+```bash
+java -Dspring.profiles.active=daemon -Dbackup.scheduled.users=octocat,github -jar target/gh-backup-1.0.0.jar
+```
+
+---
+
+## backup.scheduled.interval.ms
+
+**Type:** integer (milliseconds)  
+**Default:** `86400000` (24 hours)  
+**Description:** The delay between the end of one scheduled backup and the start of the next, when running in daemon mode. The first backup runs immediately on startup.
+
+**Override at runtime:**
+```bash
+java -Dspring.profiles.active=daemon -Dbackup.scheduled.users=octocat -Dbackup.scheduled.interval.ms=3600000 -jar target/gh-backup-1.0.0.jar
+```
 
 ---
 

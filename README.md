@@ -2,7 +2,7 @@
 
 ## Description
 
-gh-backup is a Spring Boot tool for backing up public GitHub repositories for specified users or organizations. It is available as both a command-line tool and a web application.
+gh-backup is a Spring Boot tool for backing up public GitHub repositories for specified users or organizations. It is available as a command-line tool, a web application, and a daemon that runs scheduled backups automatically (with Docker support).
 
 ## Installation
 
@@ -77,6 +77,34 @@ If you see `BUILD SUCCESS`, the tests have passed.
    java -Dspring.profiles.active=web -jar target/gh-backup-1.0.0.jar
    ```
    Then open `http://localhost:8080` in your browser.
+4. Run in daemon mode (automatic scheduled backups):
+   ```bash
+   java -Dspring.profiles.active=daemon -Dbackup.scheduled.users=octocat,github -jar target/gh-backup-1.0.0.jar
+   ```
+   See [Docker Deployment](#docker-deployment-daemon-mode) below for a containerized setup, and [COMMANDS.md](COMMANDS.md) for all daemon options.
+
+## Docker Deployment (Daemon Mode)
+
+The repository includes a `Dockerfile` and `docker-compose.yml` for running gh-backup as a background service that backs up configured users/organizations every 24 hours by default.
+
+1. Create a `.env` file from the example and configure it:
+   ```bash
+   cp .env.example .env
+   ```
+2. Start the daemon:
+   ```bash
+   docker-compose up -d
+   ```
+3. View logs:
+   ```bash
+   docker-compose logs -f
+   ```
+4. Stop the daemon:
+   ```bash
+   docker-compose down
+   ```
+
+See [CONFIG.md](CONFIG.md) for the full list of daemon configuration options.
 
 ## Authors and Acknowledgement
 

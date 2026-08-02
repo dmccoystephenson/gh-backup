@@ -61,6 +61,33 @@ java -Dbackup.directory=/mnt/storage/github-backups -jar target/gh-backup-1.0.0.
 java -Dspring.profiles.active=web -jar target/gh-backup-1.0.0.jar
 ```
 
+### `-Dspring.profiles.active=daemon`
+
+**Description:** Start the application as a background daemon that runs scheduled backups automatically, instead of a CLI tool. Requires `backup.scheduled.users` to be set.  
+**Default:** CLI mode  
+**Example:**
+```bash
+java -Dspring.profiles.active=daemon -Dbackup.scheduled.users=octocat,github -jar target/gh-backup-1.0.0.jar
+```
+
+### `-Dbackup.scheduled.users=<user/org1,user/org2,...>`
+
+**Description:** Comma-separated list of GitHub users/organizations to back up automatically in daemon mode. Only effective when running with `-Dspring.profiles.active=daemon`.  
+**Default:** *(empty)*  
+**Example:**
+```bash
+java -Dspring.profiles.active=daemon -Dbackup.scheduled.users=octocat,github -jar target/gh-backup-1.0.0.jar
+```
+
+### `-Dbackup.scheduled.interval.ms=<milliseconds>`
+
+**Description:** Delay between scheduled backups in daemon mode. Only effective when running with `-Dspring.profiles.active=daemon`.  
+**Default:** `86400000` (24 hours)  
+**Example:**
+```bash
+java -Dspring.profiles.active=daemon -Dbackup.scheduled.users=octocat -Dbackup.scheduled.interval.ms=3600000 -jar target/gh-backup-1.0.0.jar
+```
+
 ### `-Dserver.port=<port>`
 
 **Description:** Set the HTTP port for the web server (only effective in web mode).  

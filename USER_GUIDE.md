@@ -30,6 +30,16 @@ java -Dspring.profiles.active=web -jar target/gh-backup-1.0.0.jar
 
 Open `http://localhost:8080` in your browser to use the web interface.
 
+### Quick Start – Daemon Mode
+
+Run the application as a background daemon that backs up configured users/organizations automatically every 24 hours:
+
+```bash
+java -Dspring.profiles.active=daemon -Dbackup.scheduled.users=octocat,github -jar target/gh-backup-1.0.0.jar
+```
+
+The first backup runs immediately on startup, then repeats at the configured interval. See [CONFIG.md](CONFIG.md) for daemon options, and the repository's `Dockerfile`/`docker-compose.yml` for a containerized deployment.
+
 ## Common Scenarios
 
 ### Backing up a single user or organization
