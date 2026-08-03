@@ -90,6 +90,7 @@ Available interactive commands:
 |---------|-------------|
 | `backup <user/org>` | Back up all public repositories for the specified user or organization |
 | `status` | Show the backup directory, number of users/organizations, and a list of all backed up repositories |
+| `help` | Show the list of available interactive commands |
 | `exit` | Quit the interactive session |
 
 ### Example interactive session
