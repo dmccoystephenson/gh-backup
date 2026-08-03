@@ -37,6 +37,7 @@ Once in interactive mode, the following commands are available at the `>` prompt
 |---------|-------------|
 | `backup <user/org>` | Back up all public repositories for the given GitHub user or organization |
 | `status` | Display the backup directory path and a summary of all backed-up repositories |
+| `help` | Show the list of available interactive commands |
 | `exit` | Exit interactive mode and terminate the application |
 
 ## JVM System Properties
@@ -115,30 +116,36 @@ When running in web mode (`-Dspring.profiles.active=web`), the following REST en
 
 | Method | Path | Description |
 |--------|------|-------------|
-| `POST` | `/api/backup` | Start a backup for a given user or organization |
-| `GET` | `/api/status` | Return backup status and a list of all backed-up repositories |
+| `POST` | `/api/backups` | Start a backup for a given user or organization |
+| `GET` | `/api/backups/status` | Return backup status and a list of all backed-up repositories |
 
-### POST /api/backup
+### POST /api/backups
 
 **Request body:**
 ```json
-{ "username": "octocat" }
+{ "userOrOrg": "octocat" }
 ```
 
 **Response:**
 ```json
-{ "message": "Backup completed for octocat", "repositoryCount": 8 }
+{ "success": true, "message": "Backup completed successfully for octocat" }
 ```
 
-### GET /api/status
+### GET /api/backups/status
 
 **Response:**
 ```json
 {
-  "backupDirectory": "/home/user/gh-backups",
-  "users": ["octocat"],
-  "repositories": [
-    { "name": "Hello-World", "owner": "octocat", "lastUpdated": "2026-01-10T12:30:45" }
+  "totalUsers": 1,
+  "totalRepositories": 8,
+  "users": [
+    {
+      "name": "octocat",
+      "repositoryCount": 8,
+      "repositories": [
+        { "name": "Hello-World", "lastUpdated": "2026-01-10 12:30:45" }
+      ]
+    }
   ]
 }
 ```
