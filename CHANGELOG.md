@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+### Added
+
+- Daemon mode (`-Dspring.profiles.active=daemon`): runs scheduled backups automatically for configured users/organizations at a configurable interval (`backup.scheduled.users`, `backup.scheduled.interval.ms`), defaulting to every 24 hours
+- Docker support (`Dockerfile`, `docker-compose.yml`, `.env.example`) for running daemon mode as a containerized background service
+
 ## [1.0.0] – 2026-01-01
 
 ### Added
