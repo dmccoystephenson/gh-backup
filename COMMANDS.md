@@ -13,7 +13,7 @@ java [JVM_OPTIONS] -jar target/gh-backup-1.0.0.jar [OPTIONS] [USER/ORG...]
 ### `<user/org> [user/org2] ...`
 
 **Description:** One or more GitHub usernames or organization names whose public repositories should be backed up.  
-**Required:** Yes (unless using interactive mode or web mode)  
+**Required:** Yes (unless using interactive mode, web mode, or daemon mode). When no arguments are given in CLI mode, a usage message is printed and the application exits.  
 **Example:**
 ```bash
 java -jar target/gh-backup-1.0.0.jar octocat github spring-projects
@@ -21,12 +21,13 @@ java -jar target/gh-backup-1.0.0.jar octocat github spring-projects
 
 ## Options
 
-### `-i` – Interactive Mode
+### `-i`, `--interactive` – Interactive Mode
 
-**Description:** Start the tool in interactive mode, providing a prompt for issuing commands without restarting the application.  
+**Description:** Start the tool in interactive mode, providing a prompt for issuing commands without restarting the application. Both forms are equivalent, and the flag is only recognized when it is the first argument.  
 **Usage:**
 ```bash
 java -jar target/gh-backup-1.0.0.jar -i
+java -jar target/gh-backup-1.0.0.jar --interactive
 ```
 
 ### Interactive Mode Commands
@@ -39,6 +40,9 @@ Once in interactive mode, the following commands are available at the `>` prompt
 | `status` | Display the backup directory path and a summary of all backed-up repositories |
 | `help` | Show the list of available interactive commands |
 | `exit` | Exit interactive mode and terminate the application |
+| `quit` | Alias for `exit` (accepted at the prompt, but not listed by `help`) |
+
+Commands are matched case-insensitively. An unrecognized command prints an error and returns to the prompt.
 
 ## JVM System Properties
 
@@ -51,6 +55,15 @@ These are passed with `-D` before the `-jar` flag.
 **Example:**
 ```bash
 java -Dbackup.directory=/mnt/storage/github-backups -jar target/gh-backup-1.0.0.jar octocat
+```
+
+### `-Dbackup.progress.overwrite=<true|false>`
+
+**Description:** Control how clone/fetch progress is rendered. When `true`, progress percentages are rewritten in place on a single line using a carriage return. When `false`, each progress update is printed on its own line, which is easier to read in log files and CI output that do not interpret carriage returns.  
+**Default:** `true`  
+**Example:**
+```bash
+java -Dbackup.progress.overwrite=false -jar target/gh-backup-1.0.0.jar octocat
 ```
 
 ### `-Dspring.profiles.active=web`
@@ -126,14 +139,23 @@ When running in web mode (`-Dspring.profiles.active=web`), the following REST en
 { "userOrOrg": "octocat" }
 ```
 
-**Response:**
+`userOrOrg` is required and must be a valid GitHub username or organization name: 1–39 characters of letters, digits, and single hyphens, neither starting nor ending with a hyphen.
+
+**Response (`200 OK`):**
 ```json
 { "success": true, "message": "Backup completed successfully for octocat" }
 ```
 
+**Response (`400 Bad Request`):** returned when `userOrOrg` is missing, blank, or does not match the username format. The body is Spring Boot's default validation error structure rather than the `success`/`message` shape above.
+
+**Response (`500 Internal Server Error`):** returned when the backup itself fails, for example because the backup directory cannot be created.
+```json
+{ "success": false, "message": "Error: Failed to create backup directory '/backups/octocat'" }
+```
+
 ### GET /api/backups/status
 
-**Response:**
+**Response (`200 OK`):**
 ```json
 {
   "totalUsers": 1,
@@ -149,3 +171,5 @@ When running in web mode (`-Dspring.profiles.active=web`), the following REST en
   ]
 }
 ```
+
+When the backup directory does not exist yet, `200 OK` is still returned, with `totalUsers` and `totalRepositories` set to `0` and an empty `users` array. The same empty structure is returned with `500 Internal Server Error` if the status cannot be read.

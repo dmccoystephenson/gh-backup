@@ -36,11 +36,11 @@ Thank you for your interest in contributing to gh-backup! This guide will help y
 
 ### Issues
 
-Work items are tracked as [GitHub issues](https://github.com/dmccoystephenson/gh-backup/issues).
+Work items are tracked as [GitHub issues](https://github.com/Stephenson-Software/gh-backup/issues).
 
 ### Milestones
 
-Issues are grouped into [milestones](https://github.com/dmccoystephenson/gh-backup/milestones) representing upcoming releases.
+Issues are grouped into [milestones](https://github.com/Stephenson-Software/gh-backup/milestones) representing upcoming releases.
 
 ## Making Changes
 

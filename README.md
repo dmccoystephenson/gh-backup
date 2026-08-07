@@ -11,7 +11,7 @@ gh-backup is a Spring Boot tool for backing up public GitHub repositories for sp
 1. Ensure [Java 17+](https://adoptium.net/) and [Maven 3.6+](https://maven.apache.org/) are installed.
 2. Clone the repository:
    ```bash
-   git clone https://github.com/dmccoystephenson/gh-backup.git
+   git clone https://github.com/Stephenson-Software/gh-backup.git
    cd gh-backup
    ```
 3. Build the project:
@@ -34,9 +34,9 @@ You can find the support Discord server [here](https://discord.gg/xXtuAQ2).
 
 ### Experiencing a bug?
 
-Please fill out a bug report [here](https://github.com/dmccoystephenson/gh-backup/issues/new).
+Please fill out a bug report [here](https://github.com/Stephenson-Software/gh-backup/issues/new).
 
-- [Known Bugs](https://github.com/dmccoystephenson/gh-backup/issues?q=is%3Aissue+is%3Aopen+label%3Abug)
+- [Known Bugs](https://github.com/Stephenson-Software/gh-backup/issues?q=is%3Aissue+is%3Aopen+label%3Abug)
 
 ## Contributing
 
