@@ -24,6 +24,19 @@ java -Dbackup.directory=C:\Backups\GitHub -jar target/gh-backup-1.0.0.jar octoca
 
 ---
 
+## backup.progress.overwrite
+
+**Type:** boolean  
+**Default:** `true`  
+**Description:** Controls how clone and fetch progress is rendered during a backup. When `true`, progress percentages are rewritten in place on a single line using a carriage return. When `false`, each update is printed on its own line, which is easier to read in log files and CI output that do not interpret carriage returns. This value is read directly from the JVM system properties, so it must be passed with `-D` rather than set in `application.properties`.
+
+**Override at runtime:**
+```bash
+java -Dbackup.progress.overwrite=false -jar target/gh-backup-1.0.0.jar octocat
+```
+
+---
+
 ## backup.mode
 
 **Type:** string (`cli` | `web` | `daemon`)  
@@ -99,6 +112,19 @@ java -Dlogging.level.com.github.backup=DEBUG -jar target/gh-backup-1.0.0.jar oct
 
 ---
 
+## logging.level.root
+
+**Type:** string (log level)  
+**Default:** `WARN`  
+**Description:** Log level for everything outside the application's own packages, including Spring Boot and the GitHub and JGit libraries. It is deliberately quieter than `logging.level.com.github.backup` (`WARN` rather than `INFO`) so that CLI output stays readable; lower it to `INFO` or `DEBUG` when framework or library behavior needs to be diagnosed.
+
+**Override at runtime:**
+```bash
+java -Dlogging.level.root=INFO -jar target/gh-backup-1.0.0.jar octocat
+```
+
+---
+
 ## GITHUB_TOKEN (environment variable)
 
 **Type:** string  
@@ -108,4 +134,26 @@ java -Dlogging.level.com.github.backup=DEBUG -jar target/gh-backup-1.0.0.jar oct
 ```bash
 export GITHUB_TOKEN=ghp_yourTokenHere
 java -jar target/gh-backup-1.0.0.jar octocat
+```
+
+---
+
+## Docker environment variables
+
+When the image built from the included `Dockerfile` is used, the container always starts in daemon mode. `docker-entrypoint.sh` translates the following environment variables into JVM system properties before launching the application.
+
+| Variable | Maps to | Default in the image | Description |
+|----------|---------|----------------------|-------------|
+| `SCHEDULED_USERS` | `backup.scheduled.users` | *(empty)* | Comma-separated list of GitHub users/organizations to back up automatically. Passed to the application only when non-empty. |
+| `BACKUP_DIRECTORY` | `backup.directory` | `/backups` | Backup directory inside the container. |
+| `GITHUB_TOKEN` | *(read directly by the application)* | *(empty)* | GitHub personal access token, as described above. |
+
+Of these, only `GITHUB_TOKEN` and `SCHEDULED_USERS` are wired through to a `.env` file by the included `docker-compose.yml` (see `.env.example`); that file pins `BACKUP_DIRECTORY` to `/backups` and mounts the host's `./backups` directory there so backups persist outside the container.
+
+`backup.scheduled.interval.ms` has no corresponding environment variable, so a container built from this image backs up every 24 hours unless the entrypoint is overridden.
+
+**Example `.env`:**
+```
+GITHUB_TOKEN=ghp_yourTokenHere
+SCHEDULED_USERS=octocat,github
 ```
