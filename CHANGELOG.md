@@ -13,7 +13,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Fixed
 
-- Documentation accuracy: the `--interactive` flag, the `quit` command alias, the `backup.progress.overwrite` and `logging.level.root` properties, the Docker environment variables, and the web API error responses are now documented, and the repository links in `README.md` and `CONTRIBUTING.md` point at `Stephenson-Software/gh-backup`
+- Documentation accuracy: the `--interactive` flag, the `quit` command alias, the `backup.progress.overwrite` and `logging.level.root` properties, the Docker environment variables, the web API error responses, and the anonymous fallback for an invalid `GITHUB_TOKEN` are now documented, and the repository links in `README.md` and `CONTRIBUTING.md` point at `Stephenson-Software/gh-backup`
 
 ## [1.0.0] – 2026-01-01
 
