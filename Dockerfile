@@ -15,7 +15,7 @@ WORKDIR /app
 RUN apk add --no-cache git
 
 # Copy the built jar from build stage
-COPY --from=build /app/target/gh-backup-1.0.0.jar gh-backup.jar
+COPY --from=build /app/target/gh-backup-2.0.0-SNAPSHOT-8-8-2026.jar gh-backup.jar
 
 # Create backup directory
 RUN mkdir -p /backups
