@@ -5,7 +5,7 @@ gh-backup is invoked from the command line via the built JAR. This document list
 ## Basic Syntax
 
 ```
-java [JVM_OPTIONS] -jar target/gh-backup-1.0.0.jar [OPTIONS] [USER/ORG...]
+java [JVM_OPTIONS] -jar target/gh-backup-2.0.0-SNAPSHOT-8-8-2026.jar [OPTIONS] [USER/ORG...]
 ```
 
 ## Positional Arguments
@@ -16,7 +16,7 @@ java [JVM_OPTIONS] -jar target/gh-backup-1.0.0.jar [OPTIONS] [USER/ORG...]
 **Required:** Yes (unless using interactive mode, web mode, or daemon mode). When no arguments are given in CLI mode, a usage message is printed and the application exits.  
 **Example:**
 ```bash
-java -jar target/gh-backup-1.0.0.jar octocat github spring-projects
+java -jar target/gh-backup-2.0.0-SNAPSHOT-8-8-2026.jar octocat github spring-projects
 ```
 
 ## Options
@@ -26,8 +26,8 @@ java -jar target/gh-backup-1.0.0.jar octocat github spring-projects
 **Description:** Start the tool in interactive mode, providing a prompt for issuing commands without restarting the application. Both forms are equivalent, and the flag is only recognized when it is the first argument.  
 **Usage:**
 ```bash
-java -jar target/gh-backup-1.0.0.jar -i
-java -jar target/gh-backup-1.0.0.jar --interactive
+java -jar target/gh-backup-2.0.0-SNAPSHOT-8-8-2026.jar -i
+java -jar target/gh-backup-2.0.0-SNAPSHOT-8-8-2026.jar --interactive
 ```
 
 ### Interactive Mode Commands
@@ -54,7 +54,7 @@ These are passed with `-D` before the `-jar` flag.
 **Default:** `~/gh-backups/` (the `gh-backups` folder in the current user's home directory)  
 **Example:**
 ```bash
-java -Dbackup.directory=/mnt/storage/github-backups -jar target/gh-backup-1.0.0.jar octocat
+java -Dbackup.directory=/mnt/storage/github-backups -jar target/gh-backup-2.0.0-SNAPSHOT-8-8-2026.jar octocat
 ```
 
 ### `-Dbackup.progress.overwrite=<true|false>`
@@ -63,7 +63,7 @@ java -Dbackup.directory=/mnt/storage/github-backups -jar target/gh-backup-1.0.0.
 **Default:** `true`  
 **Example:**
 ```bash
-java -Dbackup.progress.overwrite=false -jar target/gh-backup-1.0.0.jar octocat
+java -Dbackup.progress.overwrite=false -jar target/gh-backup-2.0.0-SNAPSHOT-8-8-2026.jar octocat
 ```
 
 ### `-Dspring.profiles.active=web`
@@ -72,7 +72,7 @@ java -Dbackup.progress.overwrite=false -jar target/gh-backup-1.0.0.jar octocat
 **Default:** CLI mode  
 **Example:**
 ```bash
-java -Dspring.profiles.active=web -jar target/gh-backup-1.0.0.jar
+java -Dspring.profiles.active=web -jar target/gh-backup-2.0.0-SNAPSHOT-8-8-2026.jar
 ```
 
 ### `-Dspring.profiles.active=daemon`
@@ -81,7 +81,7 @@ java -Dspring.profiles.active=web -jar target/gh-backup-1.0.0.jar
 **Default:** CLI mode  
 **Example:**
 ```bash
-java -Dspring.profiles.active=daemon -Dbackup.scheduled.users=octocat,github -jar target/gh-backup-1.0.0.jar
+java -Dspring.profiles.active=daemon -Dbackup.scheduled.users=octocat,github -jar target/gh-backup-2.0.0-SNAPSHOT-8-8-2026.jar
 ```
 
 ### `-Dbackup.scheduled.users=<user/org1,user/org2,...>`
@@ -90,7 +90,7 @@ java -Dspring.profiles.active=daemon -Dbackup.scheduled.users=octocat,github -ja
 **Default:** *(empty)*  
 **Example:**
 ```bash
-java -Dspring.profiles.active=daemon -Dbackup.scheduled.users=octocat,github -jar target/gh-backup-1.0.0.jar
+java -Dspring.profiles.active=daemon -Dbackup.scheduled.users=octocat,github -jar target/gh-backup-2.0.0-SNAPSHOT-8-8-2026.jar
 ```
 
 ### `-Dbackup.scheduled.interval.ms=<milliseconds>`
@@ -99,7 +99,7 @@ java -Dspring.profiles.active=daemon -Dbackup.scheduled.users=octocat,github -ja
 **Default:** `86400000` (24 hours)  
 **Example:**
 ```bash
-java -Dspring.profiles.active=daemon -Dbackup.scheduled.users=octocat -Dbackup.scheduled.interval.ms=3600000 -jar target/gh-backup-1.0.0.jar
+java -Dspring.profiles.active=daemon -Dbackup.scheduled.users=octocat -Dbackup.scheduled.interval.ms=3600000 -jar target/gh-backup-2.0.0-SNAPSHOT-8-8-2026.jar
 ```
 
 ### `-Dserver.port=<port>`
@@ -108,7 +108,7 @@ java -Dspring.profiles.active=daemon -Dbackup.scheduled.users=octocat -Dbackup.s
 **Default:** `8080`  
 **Example:**
 ```bash
-java -Dspring.profiles.active=web -Dserver.port=9000 -jar target/gh-backup-1.0.0.jar
+java -Dspring.profiles.active=web -Dserver.port=9000 -jar target/gh-backup-2.0.0-SNAPSHOT-8-8-2026.jar
 ```
 
 ## Environment Variables
@@ -120,7 +120,7 @@ java -Dspring.profiles.active=web -Dserver.port=9000 -jar target/gh-backup-1.0.0
 **Example:**
 ```bash
 export GITHUB_TOKEN=ghp_yourTokenHere
-java -jar target/gh-backup-1.0.0.jar octocat
+java -jar target/gh-backup-2.0.0-SNAPSHOT-8-8-2026.jar octocat
 ```
 
 ## Web API Endpoints
