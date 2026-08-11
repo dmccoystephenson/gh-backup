@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [Unreleased]
+
+### Added
+
+- `BACKUP_INTERVAL_MS` environment variable for the Docker daemon image, mapped by `docker-entrypoint.sh` to `-Dbackup.scheduled.interval.ms`, so the backup interval can be configured from `.env`/`docker-compose.yml` without overriding the entrypoint
+
 ## [2.0.0-SNAPSHOT-8-8-2026] – 2026-08-08
 
 ### Changed

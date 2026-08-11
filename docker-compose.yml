@@ -10,7 +10,12 @@ services:
       # Comma-separated list of GitHub users/organizations to backup
       # Example: SCHEDULED_USERS=octocat,github,spring-projects
       - SCHEDULED_USERS=${SCHEDULED_USERS:-}
-      
+
+      # Delay between scheduled backups, in milliseconds
+      # Leave empty for the default of 86400000 (24 hours)
+      # Example: BACKUP_INTERVAL_MS=3600000
+      - BACKUP_INTERVAL_MS=${BACKUP_INTERVAL_MS:-}
+
       # Optional: Custom backup directory inside container
       - BACKUP_DIRECTORY=/backups
     volumes:
