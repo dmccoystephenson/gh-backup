@@ -145,15 +145,15 @@ When the image built from the included `Dockerfile` is used, the container alway
 | Variable | Maps to | Default in the image | Description |
 |----------|---------|----------------------|-------------|
 | `SCHEDULED_USERS` | `backup.scheduled.users` | *(empty)* | Comma-separated list of GitHub users/organizations to back up automatically. Passed to the application only when non-empty. |
+| `BACKUP_INTERVAL_MS` | `backup.scheduled.interval.ms` | *(empty)* | Delay between scheduled backups, in milliseconds. Passed to the application only when non-empty; when empty, the default of `86400000` (24 hours) from `application-daemon.properties` applies. |
 | `BACKUP_DIRECTORY` | `backup.directory` | `/backups` | Backup directory inside the container. |
 | `GITHUB_TOKEN` | *(read directly by the application)* | *(empty)* | GitHub personal access token, as described above. |
 
-Of these, only `GITHUB_TOKEN` and `SCHEDULED_USERS` are wired through to a `.env` file by the included `docker-compose.yml` (see `.env.example`); that file pins `BACKUP_DIRECTORY` to `/backups` and mounts the host's `./backups` directory there so backups persist outside the container.
-
-`backup.scheduled.interval.ms` has no corresponding environment variable, so a container built from this image backs up every 24 hours unless the entrypoint is overridden.
+Of these, `GITHUB_TOKEN`, `SCHEDULED_USERS` and `BACKUP_INTERVAL_MS` are wired through to a `.env` file by the included `docker-compose.yml` (see `.env.example`); that file pins `BACKUP_DIRECTORY` to `/backups` and mounts the host's `./backups` directory there so backups persist outside the container.
 
 **Example `.env`:**
 ```
 GITHUB_TOKEN=ghp_yourTokenHere
 SCHEDULED_USERS=octocat,github
+BACKUP_INTERVAL_MS=3600000
 ```

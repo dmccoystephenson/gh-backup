@@ -24,6 +24,7 @@ RUN mkdir -p /backups
 ENV BACKUP_DIRECTORY=/backups
 ENV GITHUB_TOKEN=""
 ENV SCHEDULED_USERS=""
+ENV BACKUP_INTERVAL_MS=""
 
 # Expose port 8080 for optional web mode.
 # The default image entrypoint runs in daemon mode, so this port is only used if the
