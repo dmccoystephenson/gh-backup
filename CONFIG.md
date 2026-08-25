@@ -14,12 +14,12 @@ The main configuration file is `src/main/resources/application.properties`. Valu
 
 **Override at runtime:**
 ```bash
-java -Dbackup.directory=/mnt/storage/github-backups -jar target/gh-backup-1.0.0.jar octocat
+java -Dbackup.directory=/mnt/storage/github-backups -jar target/gh-backup-2.0.0-SNAPSHOT-8-8-2026.jar octocat
 ```
 
 Windows example:
 ```bat
-java -Dbackup.directory=C:\Backups\GitHub -jar target/gh-backup-1.0.0.jar octocat
+java -Dbackup.directory=C:\Backups\GitHub -jar target/gh-backup-2.0.0-SNAPSHOT-8-8-2026.jar octocat
 ```
 
 ---
@@ -32,7 +32,7 @@ java -Dbackup.directory=C:\Backups\GitHub -jar target/gh-backup-1.0.0.jar octoca
 
 **Override at runtime:**
 ```bash
-java -Dbackup.progress.overwrite=false -jar target/gh-backup-1.0.0.jar octocat
+java -Dbackup.progress.overwrite=false -jar target/gh-backup-2.0.0-SNAPSHOT-8-8-2026.jar octocat
 ```
 
 ---
@@ -45,7 +45,7 @@ java -Dbackup.progress.overwrite=false -jar target/gh-backup-1.0.0.jar octocat
 
 **Override at runtime:**
 ```bash
-java -Dspring.profiles.active=web -jar target/gh-backup-1.0.0.jar
+java -Dspring.profiles.active=web -jar target/gh-backup-2.0.0-SNAPSHOT-8-8-2026.jar
 ```
 
 The `web` profile (`application-web.properties`) automatically sets `backup.mode=web` and enables the servlet web application type. The `daemon` profile (`application-daemon.properties`) automatically sets `backup.mode=daemon` and disables the embedded web server.
@@ -60,7 +60,7 @@ The `web` profile (`application-web.properties`) automatically sets `backup.mode
 
 **Override at runtime:**
 ```bash
-java -Dspring.profiles.active=daemon -Dbackup.scheduled.users=octocat,github -jar target/gh-backup-1.0.0.jar
+java -Dspring.profiles.active=daemon -Dbackup.scheduled.users=octocat,github -jar target/gh-backup-2.0.0-SNAPSHOT-8-8-2026.jar
 ```
 
 ---
@@ -73,7 +73,7 @@ java -Dspring.profiles.active=daemon -Dbackup.scheduled.users=octocat,github -ja
 
 **Override at runtime:**
 ```bash
-java -Dspring.profiles.active=daemon -Dbackup.scheduled.users=octocat -Dbackup.scheduled.interval.ms=3600000 -jar target/gh-backup-1.0.0.jar
+java -Dspring.profiles.active=daemon -Dbackup.scheduled.users=octocat -Dbackup.scheduled.interval.ms=3600000 -jar target/gh-backup-2.0.0-SNAPSHOT-8-8-2026.jar
 ```
 
 ---
@@ -94,7 +94,7 @@ java -Dspring.profiles.active=daemon -Dbackup.scheduled.users=octocat -Dbackup.s
 
 **Override at runtime:**
 ```bash
-java -Dspring.profiles.active=web -Dserver.port=9000 -jar target/gh-backup-1.0.0.jar
+java -Dspring.profiles.active=web -Dserver.port=9000 -jar target/gh-backup-2.0.0-SNAPSHOT-8-8-2026.jar
 ```
 
 ---
@@ -107,7 +107,7 @@ java -Dspring.profiles.active=web -Dserver.port=9000 -jar target/gh-backup-1.0.0
 
 **Override at runtime:**
 ```bash
-java -Dlogging.level.com.github.backup=DEBUG -jar target/gh-backup-1.0.0.jar octocat
+java -Dlogging.level.com.github.backup=DEBUG -jar target/gh-backup-2.0.0-SNAPSHOT-8-8-2026.jar octocat
 ```
 
 ---
@@ -120,7 +120,7 @@ java -Dlogging.level.com.github.backup=DEBUG -jar target/gh-backup-1.0.0.jar oct
 
 **Override at runtime:**
 ```bash
-java -Dlogging.level.root=INFO -jar target/gh-backup-1.0.0.jar octocat
+java -Dlogging.level.root=INFO -jar target/gh-backup-2.0.0-SNAPSHOT-8-8-2026.jar octocat
 ```
 
 ---
@@ -133,7 +133,7 @@ java -Dlogging.level.root=INFO -jar target/gh-backup-1.0.0.jar octocat
 
 ```bash
 export GITHUB_TOKEN=ghp_yourTokenHere
-java -jar target/gh-backup-1.0.0.jar octocat
+java -jar target/gh-backup-2.0.0-SNAPSHOT-8-8-2026.jar octocat
 ```
 
 ---

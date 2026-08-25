@@ -15,7 +15,7 @@ After building the project (`mvn clean package`), you can start backing up GitHu
 Back up all public repositories of a GitHub user or organization:
 
 ```bash
-java -jar target/gh-backup-1.0.0.jar octocat
+java -jar target/gh-backup-2.0.0-SNAPSHOT-8-8-2026.jar octocat
 ```
 
 Repositories will be saved to `~/gh-backups/` by default.
@@ -25,7 +25,7 @@ Repositories will be saved to `~/gh-backups/` by default.
 Start the web server:
 
 ```bash
-java -Dspring.profiles.active=web -jar target/gh-backup-1.0.0.jar
+java -Dspring.profiles.active=web -jar target/gh-backup-2.0.0-SNAPSHOT-8-8-2026.jar
 ```
 
 Open `http://localhost:8080` in your browser to use the web interface.
@@ -35,7 +35,7 @@ Open `http://localhost:8080` in your browser to use the web interface.
 Run the application as a background daemon that backs up configured users/organizations automatically every 24 hours:
 
 ```bash
-java -Dspring.profiles.active=daemon -Dbackup.scheduled.users=octocat,github -jar target/gh-backup-1.0.0.jar
+java -Dspring.profiles.active=daemon -Dbackup.scheduled.users=octocat,github -jar target/gh-backup-2.0.0-SNAPSHOT-8-8-2026.jar
 ```
 
 The first backup runs immediately on startup, then repeats at the configured interval. See [CONFIG.md](CONFIG.md) for daemon options, and the repository's `Dockerfile`/`docker-compose.yml` for a containerized deployment.
@@ -45,13 +45,13 @@ The first backup runs immediately on startup, then repeats at the configured int
 ### Backing up a single user or organization
 
 ```bash
-java -jar target/gh-backup-1.0.0.jar octocat
+java -jar target/gh-backup-2.0.0-SNAPSHOT-8-8-2026.jar octocat
 ```
 
 ### Backing up multiple users or organizations at once
 
 ```bash
-java -jar target/gh-backup-1.0.0.jar octocat github spring-projects
+java -jar target/gh-backup-2.0.0-SNAPSHOT-8-8-2026.jar octocat github spring-projects
 ```
 
 ### Using GitHub authentication for higher rate limits
@@ -60,7 +60,7 @@ Set the `GITHUB_TOKEN` environment variable before running:
 
 ```bash
 export GITHUB_TOKEN=your_github_token_here
-java -jar target/gh-backup-1.0.0.jar octocat
+java -jar target/gh-backup-2.0.0-SNAPSHOT-8-8-2026.jar octocat
 ```
 
 To create a token: GitHub Settings → Developer settings → Personal access tokens → Generate new token. The `public_repo` scope is sufficient for public repositories.
@@ -70,12 +70,12 @@ The token is validated on startup. If it is invalid or expired, a warning is pri
 ### Using a custom backup directory
 
 ```bash
-java -Dbackup.directory=/path/to/backup -jar target/gh-backup-1.0.0.jar octocat
+java -Dbackup.directory=/path/to/backup -jar target/gh-backup-2.0.0-SNAPSHOT-8-8-2026.jar octocat
 ```
 
 Windows example:
 ```bat
-java -Dbackup.directory=C:\Backups\GitHub -jar target/gh-backup-1.0.0.jar octocat
+java -Dbackup.directory=C:\Backups\GitHub -jar target/gh-backup-2.0.0-SNAPSHOT-8-8-2026.jar octocat
 ```
 
 ### Using interactive mode
@@ -83,7 +83,7 @@ java -Dbackup.directory=C:\Backups\GitHub -jar target/gh-backup-1.0.0.jar octoca
 Start in interactive mode for an on-screen menu, using either `-i` or the equivalent `--interactive`:
 
 ```bash
-java -jar target/gh-backup-1.0.0.jar -i
+java -jar target/gh-backup-2.0.0-SNAPSHOT-8-8-2026.jar -i
 ```
 
 Available interactive commands:
