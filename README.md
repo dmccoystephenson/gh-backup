@@ -18,7 +18,7 @@ gh-backup is a Spring Boot tool for backing up public GitHub repositories for sp
    ```bash
    mvn clean package
    ```
-4. The executable JAR will be created at `target/gh-backup-1.0.0.jar`.
+4. The executable JAR will be created at `target/gh-backup-2.0.0-SNAPSHOT-8-8-2026.jar`.
 
 ## Usage
 
@@ -70,16 +70,16 @@ If you see `BUILD SUCCESS`, the tests have passed.
    ```
 2. Run in CLI mode:
    ```bash
-   java -jar target/gh-backup-1.0.0.jar octocat
+   java -jar target/gh-backup-2.0.0-SNAPSHOT-8-8-2026.jar octocat
    ```
 3. Run in web mode:
    ```bash
-   java -Dspring.profiles.active=web -jar target/gh-backup-1.0.0.jar
+   java -Dspring.profiles.active=web -jar target/gh-backup-2.0.0-SNAPSHOT-8-8-2026.jar
    ```
    Then open `http://localhost:8080` in your browser.
 4. Run in daemon mode (automatic scheduled backups):
    ```bash
-   java -Dspring.profiles.active=daemon -Dbackup.scheduled.users=octocat,github -jar target/gh-backup-1.0.0.jar
+   java -Dspring.profiles.active=daemon -Dbackup.scheduled.users=octocat,github -jar target/gh-backup-2.0.0-SNAPSHOT-8-8-2026.jar
    ```
    See [Docker Deployment](#docker-deployment-daemon-mode) below for a containerized setup, and [COMMANDS.md](COMMANDS.md) for all daemon options.
 
