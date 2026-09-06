@@ -40,9 +40,24 @@ failures=0
 run_entrypoint() {
     unset BACKUP_DIRECTORY SCHEDULED_USERS BACKUP_INTERVAL_MS
     for assignment in "$@"; do
-        name=${assignment%%=*}
-        value=${assignment#*=}
-        eval "export $name=\"\$value\""
+        case $assignment in
+            BACKUP_DIRECTORY=*)
+                BACKUP_DIRECTORY=${assignment#*=}
+                export BACKUP_DIRECTORY
+                ;;
+            SCHEDULED_USERS=*)
+                SCHEDULED_USERS=${assignment#*=}
+                export SCHEDULED_USERS
+                ;;
+            BACKUP_INTERVAL_MS=*)
+                BACKUP_INTERVAL_MS=${assignment#*=}
+                export BACKUP_INTERVAL_MS
+                ;;
+            *)
+                echo "Not a variable docker-entrypoint.sh reads: $assignment" >&2
+                exit 1
+                ;;
+        esac
     done
     PATH="$STUB_BIN:$PATH" sh "$ENTRYPOINT"
 }
@@ -83,9 +98,9 @@ expect "all variables set, in declaration order" \
     "$PROFILE[-Dbackup.directory=/backups][-Dbackup.scheduled.users=octocat][-Dbackup.scheduled.interval.ms=60000]$JAR" \
     "BACKUP_DIRECTORY=/backups" "SCHEDULED_USERS=octocat" "BACKUP_INTERVAL_MS=60000"
 
-# The Dockerfile ships GITHUB_TOKEN, SCHEDULED_USERS and BACKUP_INTERVAL_MS as
-# empty defaults, so an empty value must be treated as unset rather than passed
-# through as an empty system property.
+# The Dockerfile ships SCHEDULED_USERS and BACKUP_INTERVAL_MS as empty defaults,
+# so an empty value must be treated as unset rather than passed through as an
+# empty system property.
 expect "empty variables add no arguments" \
     "$PROFILE$JAR" \
     "BACKUP_DIRECTORY=" "SCHEDULED_USERS=" "BACKUP_INTERVAL_MS="
