@@ -69,6 +69,14 @@ Windows:
 mvn clean test
 ```
 
+The Docker entrypoint script is covered by a separate shell test, which runs `docker-entrypoint.sh` against a stub `java` and asserts the arguments it builds. It requires a POSIX shell, so run it on Linux / macOS (or under WSL or Git Bash on Windows):
+
+```bash
+sh docker-entrypoint-test.sh
+```
+
+Both suites run in CI on every pull request.
+
 ## Questions
 
 Ask in the [Discord server](https://discord.gg/xXtuAQ2).

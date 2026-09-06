@@ -60,6 +60,24 @@ mvn clean test
 
 If you see `BUILD SUCCESS`, the tests have passed.
 
+### Entrypoint Script Test
+
+`docker-entrypoint.sh` is covered by a shell test that runs it against a stub `java` and asserts the arguments it builds. A POSIX shell is required, so on Windows it is run under WSL or Git Bash.
+
+Linux / macOS:
+
+```bash
+sh docker-entrypoint-test.sh
+```
+
+Windows (Git Bash / WSL):
+
+```bash
+sh docker-entrypoint-test.sh
+```
+
+If you see `All docker-entrypoint.sh tests passed.`, the tests have passed.
+
 ## Development
 
 ### Building and Running Locally
