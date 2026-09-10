@@ -16,7 +16,7 @@ making any changes.
 
 - `src/main/java/com/github/backup/` – Core application classes (backup service, GitHub service, CLI runner)
 - `src/main/java/com/github/backup/web/` – Spring MVC REST controller and request/response models for web mode
-- `src/main/resources/` – `application.properties`, `application-web.properties`, and static web assets
+- `src/main/resources/` – `application.properties`, `application-web.properties`, `application-daemon.properties`, and static web assets
 - `src/test/java/` – Unit tests mirroring the main source tree
 
 ## Coding Conventions
@@ -28,6 +28,6 @@ making any changes.
 
 ## Contribution Workflow
 
-- Branch from `develop` for all changes.
-- Open a pull request against `develop`, not `main`.
+- Branch from `main` for all changes.
+- Open a pull request against `main`.
 - Reference the related GitHub issue in every pull request description.
