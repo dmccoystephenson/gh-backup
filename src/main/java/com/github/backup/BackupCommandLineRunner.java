@@ -12,9 +12,11 @@ import java.util.Scanner;
 public class BackupCommandLineRunner implements CommandLineRunner {
 
     private final BackupService backupService;
+    private final UsageReportingService usageReporting;
 
-    public BackupCommandLineRunner(BackupService backupService) {
+    public BackupCommandLineRunner(BackupService backupService, UsageReportingService usageReporting) {
         this.backupService = backupService;
+        this.usageReporting = usageReporting;
     }
 
     @Override
@@ -49,6 +51,7 @@ public class BackupCommandLineRunner implements CommandLineRunner {
         }
 
         System.out.println("\nBackup completed!");
+        usageReporting.backupCompleted();
     }
 
     private void runInteractiveMode() {
@@ -90,6 +93,7 @@ public class BackupCommandLineRunner implements CommandLineRunner {
                         } catch (Exception e) {
                             System.err.println("Error backing up " + userOrOrg + ": " + e.getMessage());
                         }
+                        usageReporting.backupCompleted();
                     }
                     break;
 

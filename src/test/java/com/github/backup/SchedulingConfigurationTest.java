@@ -7,6 +7,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestPropertySource;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -18,6 +19,7 @@ class SchedulingConfigurationTest {
 
     @Nested
     @SpringBootTest
+    @TestPropertySource(properties = "usage.reporting.enabled=false") // never report to the trace service from a test
     @ActiveProfiles("daemon")
     class DaemonProfileTest {
         
@@ -46,6 +48,7 @@ class SchedulingConfigurationTest {
     
     @Nested
     @SpringBootTest
+    @TestPropertySource(properties = "usage.reporting.enabled=false") // never report to the trace service from a test
     @ActiveProfiles("web")
     class WebProfileTest {
         
@@ -62,6 +65,7 @@ class SchedulingConfigurationTest {
     
     @Nested
     @SpringBootTest
+    @TestPropertySource(properties = "usage.reporting.enabled=false") // never report to the trace service from a test
     class DefaultProfileTest {
         
         @Autowired

@@ -1,6 +1,7 @@
 package com.github.backup.web;
 
 import com.github.backup.BackupService;
+import com.github.backup.UsageReportingService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,15 +22,18 @@ import java.util.Collections;
 public class BackupController {
 
     private final BackupService backupService;
+    private final UsageReportingService usageReporting;
 
-    public BackupController(BackupService backupService) {
+    public BackupController(BackupService backupService, UsageReportingService usageReporting) {
         this.backupService = backupService;
+        this.usageReporting = usageReporting;
     }
 
     @PostMapping
     public ResponseEntity<BackupResponse> createBackup(@Valid @RequestBody BackupRequest request) {
         try {
             backupService.backupUserRepositories(request.getUserOrOrg());
+            usageReporting.backupCompleted();
             return ResponseEntity.ok(new BackupResponse(true, "Backup completed successfully for " + request.getUserOrOrg()));
         } catch (IOException e) {
             return ResponseEntity.status(500)

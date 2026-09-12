@@ -28,6 +28,10 @@ gh-backup is a Spring Boot tool for backing up public GitHub repositories for sp
 - [Commands Reference](COMMANDS.md) – Complete list of all CLI commands and options
 - [Configuration Guide](CONFIG.md) – Detailed configuration options
 
+### Usage reporting
+
+gh-backup reports that it was used to the maintainers' [trace](https://github.com/Stephenson-Software/trace) service: a `startup` event carrying the program name and version, and a `backup-completed` event carrying nothing else. Nothing about the users, organizations or repositories being backed up is sent. It is on by default, a one-line notice is logged the first time it runs, and it is turned off with `-Dusage.reporting.enabled=false` (or `USAGE_REPORTING_ENABLED=false` in the environment). See [`usage.reporting.enabled`](CONFIG.md#usagereportingenabled) in the Configuration Guide.
+
 ## Support
 
 You can find the support Discord server [here](https://discord.gg/xXtuAQ2).
