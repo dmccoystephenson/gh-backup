@@ -125,6 +125,41 @@ java -Dlogging.level.root=INFO -jar target/gh-backup-2.0.0-SNAPSHOT-8-8-2026.jar
 
 ---
 
+## usage.reporting.enabled
+
+**Type:** boolean  
+**Default:** `true`  
+**Description:** Whether gh-backup reports that it was used to the maintainers' trace service. When on, two events are sent, both from a background thread that never blocks or delays a backup: `startup` once per process, tagged with the program version only, and `backup-completed` when a backup run finishes, with no tags at all. Nothing about the users, organizations or repositories being backed up is sent, and no usernames, hostnames, IP addresses or paths. The first time reporting runs on a machine, one `INFO` line saying so is logged, and a marker file (`~/.config/gh-backup/usage-reporting-notice-shown`) keeps it from repeating; delete that file to see the notice again. gh-backup has no settings file of its own, which is why the marker lives there. Setting the property to `false` sends nothing, logs no notice and writes no marker. As with every other property, it can also be set in an `application.properties` next to the JAR, and it is read from a `USAGE_REPORTING_ENABLED` environment variable, which is how the Docker image is configured.
+
+**Override at runtime:**
+```bash
+java -Dusage.reporting.enabled=false -jar target/gh-backup-2.0.0-SNAPSHOT-8-8-2026.jar octocat
+```
+
+or:
+```bash
+export USAGE_REPORTING_ENABLED=false
+java -jar target/gh-backup-2.0.0-SNAPSHOT-8-8-2026.jar octocat
+```
+
+---
+
+## usage.reporting.endpoint
+
+**Type:** string (URL)  
+**Default:** `https://trace.danielstephenson.dev`  
+**Description:** The trace server usage events are sent to. Only worth changing to point a development build at a local stub.
+
+---
+
+## usage.reporting.key
+
+**Type:** string  
+**Default:** the key issued to gh-backup (bundled in `application.properties`)  
+**Description:** The write-only key gh-backup authenticates to the trace server with. It can only record usage events; it cannot read anything. Leaving it empty disables reporting.
+
+---
+
 ## GITHUB_TOKEN (environment variable)
 
 **Type:** string  
@@ -148,12 +183,14 @@ When the image built from the included `Dockerfile` is used, the container alway
 | `BACKUP_INTERVAL_MS` | `backup.scheduled.interval.ms` | *(empty)* | Delay between scheduled backups, in milliseconds. Passed to the application only when non-empty; when empty, the default of `86400000` (24 hours) from `application-daemon.properties` applies. |
 | `BACKUP_DIRECTORY` | `backup.directory` | `/backups` | Backup directory inside the container. |
 | `GITHUB_TOKEN` | *(read directly by the application)* | *(empty)* | GitHub personal access token, as described above. |
+| `USAGE_REPORTING_ENABLED` | `usage.reporting.enabled` *(read directly by the application)* | `true` | Set to `false` to stop the daemon reporting `startup` and `backup-completed` events to the trace service, as described above. |
 
-Of these, `GITHUB_TOKEN`, `SCHEDULED_USERS` and `BACKUP_INTERVAL_MS` are wired through to a `.env` file by the included `docker-compose.yml` (see `.env.example`); that file pins `BACKUP_DIRECTORY` to `/backups` and mounts the host's `./backups` directory there so backups persist outside the container.
+Of these, `GITHUB_TOKEN`, `SCHEDULED_USERS`, `BACKUP_INTERVAL_MS` and `USAGE_REPORTING_ENABLED` are wired through to a `.env` file by the included `docker-compose.yml` (see `.env.example`); that file pins `BACKUP_DIRECTORY` to `/backups` and mounts the host's `./backups` directory there so backups persist outside the container.
 
 **Example `.env`:**
 ```
 GITHUB_TOKEN=ghp_yourTokenHere
 SCHEDULED_USERS=octocat,github
 BACKUP_INTERVAL_MS=3600000
+USAGE_REPORTING_ENABLED=true
 ```

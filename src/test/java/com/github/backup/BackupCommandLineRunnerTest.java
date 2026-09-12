@@ -15,17 +15,23 @@ class BackupCommandLineRunnerTest {
     @Mock
     private BackupService backupService;
 
+    @Mock
+    private UsageReportingService usageReporting;
+
     private BackupCommandLineRunner runner;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        runner = new BackupCommandLineRunner(backupService);
+        runner = new BackupCommandLineRunner(backupService, usageReporting);
     }
 
     @Test
     void testRun_NoArguments() throws Exception {
         assertDoesNotThrow(() -> runner.run());
+
+        // Printing the usage text is not a backup run
+        verifyNoInteractions(usageReporting);
     }
 
     @Test
@@ -46,6 +52,9 @@ class BackupCommandLineRunnerTest {
         verify(backupService).backupUserRepositories("user1");
         verify(backupService).backupUserRepositories("user2");
         verify(backupService).backupUserRepositories("user3");
+
+        // One backup run, one backup-completed report, however many users it covered
+        verify(usageReporting, times(1)).backupCompleted();
     }
 
     @Test

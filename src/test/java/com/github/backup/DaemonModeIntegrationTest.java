@@ -18,7 +18,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestPropertySource(properties = {
     "backup.mode=daemon",
     "backup.scheduled.users=testuser1,testuser2",
-    "backup.scheduled.interval.ms=3600000"
+    "backup.scheduled.interval.ms=3600000",
+    "usage.reporting.enabled=false" // never report to the trace service from a test
 })
 class DaemonModeIntegrationTest {
 

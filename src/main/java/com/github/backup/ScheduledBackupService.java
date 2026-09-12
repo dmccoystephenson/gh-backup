@@ -26,14 +26,17 @@ public class ScheduledBackupService {
     private static final int SEPARATOR_LENGTH = 80;
 
     private final BackupService backupService;
+    private final UsageReportingService usageReporting;
     private final List<String> scheduledUsers;
     private final long backupIntervalMs;
     private final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     public ScheduledBackupService(BackupService backupService,
+                                   UsageReportingService usageReporting,
                                    @Value("${backup.scheduled.users:}") String scheduledUsersConfig,
                                    @Value("${backup.scheduled.interval.ms:86400000}") long backupIntervalMs) {
         this.backupService = backupService;
+        this.usageReporting = usageReporting;
         this.backupIntervalMs = backupIntervalMs;
         // Parse comma-separated list of users/orgs
         this.scheduledUsers = scheduledUsersConfig.isBlank() 
@@ -91,5 +94,6 @@ public class ScheduledBackupService {
         log.info("Next backup will run {} hours after this backup completes.", backupIntervalMs / 3600000.0);
         log.info("{}", "=".repeat(SEPARATOR_LENGTH));
         log.info("");
+        usageReporting.backupCompleted();
     }
 }

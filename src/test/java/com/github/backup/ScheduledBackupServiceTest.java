@@ -25,6 +25,9 @@ class ScheduledBackupServiceTest {
     @Mock
     private BackupService backupService;
 
+    @Mock
+    private UsageReportingService usageReporting;
+
     private ScheduledBackupService scheduledBackupService;
     private ListAppender<ILoggingEvent> logAppender;
     private Logger logger;
@@ -49,18 +52,20 @@ class ScheduledBackupServiceTest {
 
     @Test
     void testScheduledBackupService_WithNoUsers() {
-        scheduledBackupService = new ScheduledBackupService(backupService, "", DEFAULT_INTERVAL);
+        scheduledBackupService = new ScheduledBackupService(backupService, usageReporting, "", DEFAULT_INTERVAL);
         
         // Should not throw exception with empty users list
         assertDoesNotThrow(() -> scheduledBackupService.runScheduledBackup());
         
         // Should not call backup service when no users configured
         verifyNoInteractions(backupService);
+        // ...and a run that backed up nothing is not reported as a completed backup
+        verifyNoInteractions(usageReporting);
     }
 
     @Test
     void testScheduledBackupService_WithSingleUser() throws IOException {
-        scheduledBackupService = new ScheduledBackupService(backupService, "octocat", DEFAULT_INTERVAL);
+        scheduledBackupService = new ScheduledBackupService(backupService, usageReporting, "octocat", DEFAULT_INTERVAL);
         
         scheduledBackupService.runScheduledBackup();
         
@@ -70,7 +75,7 @@ class ScheduledBackupServiceTest {
 
     @Test
     void testScheduledBackupService_WithMultipleUsers() throws IOException {
-        scheduledBackupService = new ScheduledBackupService(backupService, "octocat,github,spring-projects", DEFAULT_INTERVAL);
+        scheduledBackupService = new ScheduledBackupService(backupService, usageReporting, "octocat,github,spring-projects", DEFAULT_INTERVAL);
         
         scheduledBackupService.runScheduledBackup();
         
@@ -78,11 +83,14 @@ class ScheduledBackupServiceTest {
         verify(backupService, times(1)).backupUserRepositories("octocat");
         verify(backupService, times(1)).backupUserRepositories("github");
         verify(backupService, times(1)).backupUserRepositories("spring-projects");
+
+        // One scheduled run, one backup-completed report, however many users it covered
+        verify(usageReporting, times(1)).backupCompleted();
     }
 
     @Test
     void testScheduledBackupService_WithWhitespace() throws IOException {
-        scheduledBackupService = new ScheduledBackupService(backupService, " octocat , github , spring-projects ", DEFAULT_INTERVAL);
+        scheduledBackupService = new ScheduledBackupService(backupService, usageReporting, " octocat , github , spring-projects ", DEFAULT_INTERVAL);
         
         scheduledBackupService.runScheduledBackup();
         
@@ -94,7 +102,7 @@ class ScheduledBackupServiceTest {
 
     @Test
     void testScheduledBackupService_HandlesException() throws IOException {
-        scheduledBackupService = new ScheduledBackupService(backupService, "octocat,github", DEFAULT_INTERVAL);
+        scheduledBackupService = new ScheduledBackupService(backupService, usageReporting, "octocat,github", DEFAULT_INTERVAL);
         
         doThrow(new IOException("Test exception")).when(backupService).backupUserRepositories("octocat");
         
@@ -107,7 +115,7 @@ class ScheduledBackupServiceTest {
 
     @Test
     void testScheduledBackupService_WithEmptyStrings() throws IOException {
-        scheduledBackupService = new ScheduledBackupService(backupService, "octocat,,github", DEFAULT_INTERVAL);
+        scheduledBackupService = new ScheduledBackupService(backupService, usageReporting, "octocat,,github", DEFAULT_INTERVAL);
         
         scheduledBackupService.runScheduledBackup();
         
@@ -119,7 +127,7 @@ class ScheduledBackupServiceTest {
 
     @Test
     void testScheduledBackupService_WithBlankString() {
-        scheduledBackupService = new ScheduledBackupService(backupService, "   ", DEFAULT_INTERVAL);
+        scheduledBackupService = new ScheduledBackupService(backupService, usageReporting, "   ", DEFAULT_INTERVAL);
         
         assertDoesNotThrow(() -> scheduledBackupService.runScheduledBackup());
         
@@ -129,7 +137,7 @@ class ScheduledBackupServiceTest {
 
     @Test
     void testScheduledBackupService_WithCustomInterval() {
-        scheduledBackupService = new ScheduledBackupService(backupService, "octocat", ONE_HOUR_INTERVAL);
+        scheduledBackupService = new ScheduledBackupService(backupService, usageReporting, "octocat", ONE_HOUR_INTERVAL);
         
         // Should not throw exception with custom interval
         assertDoesNotThrow(() -> scheduledBackupService.runScheduledBackup());
@@ -137,7 +145,7 @@ class ScheduledBackupServiceTest {
 
     @Test
     void testInit_WithNoUsers_LogsWarning() {
-        scheduledBackupService = new ScheduledBackupService(backupService, "", DEFAULT_INTERVAL);
+        scheduledBackupService = new ScheduledBackupService(backupService, usageReporting, "", DEFAULT_INTERVAL);
         scheduledBackupService.init();
         
         // Verify warning logs are present
@@ -150,7 +158,7 @@ class ScheduledBackupServiceTest {
 
     @Test
     void testInit_WithUsers_LogsInfo() {
-        scheduledBackupService = new ScheduledBackupService(backupService, "octocat,github", DEFAULT_INTERVAL);
+        scheduledBackupService = new ScheduledBackupService(backupService, usageReporting, "octocat,github", DEFAULT_INTERVAL);
         scheduledBackupService.init();
         
         // Verify info logs are present
@@ -168,7 +176,7 @@ class ScheduledBackupServiceTest {
 
     @Test
     void testInit_DisplaysCorrectIntervalInHours() {
-        scheduledBackupService = new ScheduledBackupService(backupService, "octocat", ONE_HOUR_INTERVAL);
+        scheduledBackupService = new ScheduledBackupService(backupService, usageReporting, "octocat", ONE_HOUR_INTERVAL);
         scheduledBackupService.init();
         
         // Verify interval is displayed correctly
@@ -180,7 +188,7 @@ class ScheduledBackupServiceTest {
 
     @Test
     void testInit_DisplaysDefault24HourInterval() {
-        scheduledBackupService = new ScheduledBackupService(backupService, "octocat", DEFAULT_INTERVAL);
+        scheduledBackupService = new ScheduledBackupService(backupService, usageReporting, "octocat", DEFAULT_INTERVAL);
         scheduledBackupService.init();
         
         // Verify 24 hour interval is displayed
@@ -192,7 +200,7 @@ class ScheduledBackupServiceTest {
 
     @Test
     void testRunScheduledBackup_LogsStartAndComplete() throws IOException {
-        scheduledBackupService = new ScheduledBackupService(backupService, "octocat", DEFAULT_INTERVAL);
+        scheduledBackupService = new ScheduledBackupService(backupService, usageReporting, "octocat", DEFAULT_INTERVAL);
         scheduledBackupService.runScheduledBackup();
         
         // Verify backup start and completion are logged
@@ -208,7 +216,7 @@ class ScheduledBackupServiceTest {
 
     @Test
     void testRunScheduledBackup_LogsErrorForFailedUser() throws IOException {
-        scheduledBackupService = new ScheduledBackupService(backupService, "octocat,github", DEFAULT_INTERVAL);
+        scheduledBackupService = new ScheduledBackupService(backupService, usageReporting, "octocat,github", DEFAULT_INTERVAL);
         
         doThrow(new IOException("Network error")).when(backupService).backupUserRepositories("octocat");
         
@@ -228,7 +236,7 @@ class ScheduledBackupServiceTest {
 
     @Test
     void testRunScheduledBackup_WithNoUsers_NoLogsGenerated() {
-        scheduledBackupService = new ScheduledBackupService(backupService, "", DEFAULT_INTERVAL);
+        scheduledBackupService = new ScheduledBackupService(backupService, usageReporting, "", DEFAULT_INTERVAL);
         
         logAppender.list.clear(); // Clear any init logs
         scheduledBackupService.runScheduledBackup();
@@ -245,6 +253,7 @@ class ScheduledBackupServiceTest {
     void testMultipleUserNames_ParsedCorrectly() throws IOException {
         scheduledBackupService = new ScheduledBackupService(
             backupService, 
+            usageReporting,
             "user1,user2,user3,user4,user5", 
             DEFAULT_INTERVAL
         );
@@ -265,6 +274,7 @@ class ScheduledBackupServiceTest {
         // Test that usernames with hyphens and underscores work correctly
         scheduledBackupService = new ScheduledBackupService(
             backupService, 
+            usageReporting,
             "user-with-dash,user_with_underscore,user.with.dots", 
             DEFAULT_INTERVAL
         );
@@ -279,7 +289,7 @@ class ScheduledBackupServiceTest {
     @Test
     void testIntervalAccuracy_SmallInterval() {
         long twoHours = 7200000L; // 2 hours
-        scheduledBackupService = new ScheduledBackupService(backupService, "octocat", twoHours);
+        scheduledBackupService = new ScheduledBackupService(backupService, usageReporting, "octocat", twoHours);
         scheduledBackupService.init();
         
         // Verify correct hour calculation for 2 hours
@@ -292,7 +302,7 @@ class ScheduledBackupServiceTest {
     @Test
     void testIntervalAccuracy_LargeInterval() {
         long oneWeek = 604800000L; // 7 days = 168 hours
-        scheduledBackupService = new ScheduledBackupService(backupService, "octocat", oneWeek);
+        scheduledBackupService = new ScheduledBackupService(backupService, usageReporting, "octocat", oneWeek);
         scheduledBackupService.init();
         
         // Verify correct hour calculation for 168 hours (1 week)

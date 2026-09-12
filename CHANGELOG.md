@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Usage reporting to the maintainers' trace service: a `startup` event (program name and version only) once per process and a `backup-completed` event (nothing else) when a backup run finishes, sent from a background thread that never delays a backup or holds up exit by more than the client's 5-second timeout. Nothing about the users, organizations or repositories being backed up is sent. On by default; a one-line notice is logged the first time it runs on a machine (recorded in `~/.config/gh-backup/usage-reporting-notice-shown`), and it is turned off with `-Dusage.reporting.enabled=false` or `USAGE_REPORTING_ENABLED=false` (`usage.reporting.endpoint` and `usage.reporting.key` are documented in `CONFIG.md`; the Docker daemon takes `USAGE_REPORTING_ENABLED` from `.env`)
+- `TraceClient`, the [trace-client-java](https://github.com/Stephenson-Software/trace-client-java) client, vendored unmodified apart from its package line as `com.github.backup.trace.TraceClient` together with its tests
 - `BACKUP_INTERVAL_MS` environment variable for the Docker daemon image, mapped by `docker-entrypoint.sh` to `-Dbackup.scheduled.interval.ms`, so the backup interval can be configured from `.env`/`docker-compose.yml` without overriding the entrypoint
 - `docker-entrypoint-test.sh`, a shell test that runs `docker-entrypoint.sh` against a stub `java` and asserts the argument list built for each combination of `BACKUP_DIRECTORY`, `SCHEDULED_USERS` and `BACKUP_INTERVAL_MS`, including empty values and values containing spaces; it runs in the `docker-build` CI job, so entrypoint changes are no longer merged unexecuted
 

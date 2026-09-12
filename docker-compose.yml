@@ -18,6 +18,11 @@ services:
 
       # Optional: Custom backup directory inside container
       - BACKUP_DIRECTORY=/backups
+
+      # Usage reporting to the maintainers' trace service (startup and
+      # backup-completed events, nothing about what is backed up).
+      # Set USAGE_REPORTING_ENABLED=false to turn it off; see CONFIG.md
+      - USAGE_REPORTING_ENABLED=${USAGE_REPORTING_ENABLED:-true}
     volumes:
       # Mount a local directory to persist backups
       - ./backups:/backups

@@ -1,6 +1,7 @@
 package com.github.backup.web;
 
 import com.github.backup.BackupService;
+import com.github.backup.UsageReportingService;
 import com.github.backup.web.BackupStatusResponse.RepositoryInfo;
 import com.github.backup.web.BackupStatusResponse.UserBackupInfo;
 import org.junit.jupiter.api.Test;
@@ -30,6 +31,9 @@ class BackupControllerTest {
 
     @MockBean
     private BackupService backupService;
+
+    @MockBean
+    private UsageReportingService usageReporting;
 
     @Test
     void createBackup_Success() throws Exception {
