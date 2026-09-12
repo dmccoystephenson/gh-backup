@@ -13,9 +13,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - `BACKUP_INTERVAL_MS` environment variable for the Docker daemon image, mapped by `docker-entrypoint.sh` to `-Dbackup.scheduled.interval.ms`, so the backup interval can be configured from `.env`/`docker-compose.yml` without overriding the entrypoint
 - `docker-entrypoint-test.sh`, a shell test that runs `docker-entrypoint.sh` against a stub `java` and asserts the argument list built for each combination of `BACKUP_DIRECTORY`, `SCHEDULED_USERS` and `BACKUP_INTERVAL_MS`, including empty values and values containing spaces; it runs in the `docker-build` CI job, so entrypoint changes are no longer merged unexecuted
 
+### Changed
+
+- CI now pins `actions/checkout@v5` and `actions/setup-java@v5` in both `.github/workflows/build.yml` and `.github/workflows/release.yml`, replacing the `v4` pins that GitHub has deprecated along with the Node.js 20 runtime they target
+
 ### Fixed
 
 - Documentation accuracy: the `java -jar` examples in `README.md`, `USER_GUIDE.md` and `CONFIG.md` now name `target/gh-backup-2.0.0-SNAPSHOT-8-8-2026.jar`, the artifact the build actually produces, instead of the non-existent `target/gh-backup-1.0.0.jar`
+- The `Build` workflow no longer triggers on a `develop` branch, and `.github/copilot-instructions.md` no longer instructs contributors to branch from and open pull requests against `develop`; the repository has only ever had `main`, and `CONTRIBUTING.md` was corrected to match in an earlier change
+- `.github/copilot-instructions.md` now lists `application-daemon.properties` among the files under `src/main/resources/`, alongside `application.properties` and `application-web.properties`
 
 ## [2.0.0-SNAPSHOT-8-8-2026] – 2026-08-08
 
